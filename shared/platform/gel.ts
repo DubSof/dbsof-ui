@@ -12,6 +12,21 @@ export {
   CardinalityViolationError,
   AccessError,
   UnknownDatabaseError,
+  Duration,
+  RelativeDuration,
+  DateDuration,
+  LocalDate,
+  LocalTime,
+  ConfigMemory,
+  Float16Array,
+  SparseVector,
+  parseWKT,
+  ClientError,
+  TransactionConflictError,
+  SHOULD_RETRY,
+  Cardinality,
+  Language,
+  OutputFormat,
 } from "gel";
 
 export type {ProtocolVersion, QueryArgs, Language, Cardinality} from "gel/dist/ifaces";
@@ -20,6 +35,7 @@ export {utf8Decoder, encodeB64, ReadBuffer, WriteBuffer} from "gel/dist/primitiv
 export {Options as ConnectionOptions} from "gel/dist/options";
 export {localDateInstances} from "gel/dist/datatypes/datetime";
 export {default as LRU} from "gel/dist/primitives/lru";
+export {default} from "gel/dist/primitives/lru";
 export {AdminUIFetchConnection} from "gel/dist/fetchConn";
 export {Capabilities} from "gel/dist/baseConn";
 export {sleep} from "gel/dist/utils";
