@@ -7,7 +7,7 @@ import {
 } from "react";
 import {observer} from "mobx-react-lite";
 
-import * as PostGIS from "@dbsof/platform/gel";
+import * as PostGIS from "@dbsof/platform/client";
 import {
   Geometry,
   LineString,

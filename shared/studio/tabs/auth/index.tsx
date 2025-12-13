@@ -51,7 +51,7 @@ const AuthAdminLoader = observer(function AuthAdminLoader() {
           <CodeBlock code="using extension auth;" />
           <p>
             For more information check out the{" "}
-            <a href="https://www.geldata.com/p/auth-ext-docs" target="_blank">
+            <a href="https://example.com/docs/auth" target="_blank">
               auth extension docs
             </a>
           </p>

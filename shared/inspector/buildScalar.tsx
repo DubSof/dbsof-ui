@@ -7,7 +7,7 @@ import {
   SparseVector,
   Geometry,
   type AnyGeometry,
-} from "@dbsof/platform/gel";
+} from "@dbsof/platform/client";
 
 import cn from "@dbsof/common/utils/classNames";
 import {
@@ -19,8 +19,8 @@ import {
   sparseVectorToString,
 } from "@dbsof/common/utils/renderJsonResult";
 
-import {EnumCodec} from "@dbsof/platform/gel";
-import {RangeCodec, MultiRangeCodec} from "@dbsof/platform/gel";
+import {EnumCodec} from "@dbsof/platform/client";
+import {RangeCodec, MultiRangeCodec} from "@dbsof/platform/client";
 
 import {Item, ItemType} from "./buildItem";
 

@@ -36,7 +36,7 @@ export function DocsTutorialIcon() {
   );
 }
 
-export function DocsEasyEdgeDBIcon() {
+export function DocsQuickstartIcon() {
   return (
     <svg
       width="40"

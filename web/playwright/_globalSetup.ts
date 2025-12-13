@@ -5,12 +5,12 @@ import {
   createClient,
   AccessError,
   UnknownDatabaseError,
-  Event as GelEvent,
-} from "@dbsof/platform/gel";
+  Event as ClientEvent,
+} from "@dbsof/platform/client";
 
 import {schemaScript} from "@dbsof/studio/tabs/dashboard/exampleSchema.mts";
 
-class Event extends (GelEvent as any) {}
+class Event extends (ClientEvent as any) {}
 
 const STARTUP_TIMEOUT = 5 * 60_000;
 
@@ -93,18 +93,18 @@ async function checkConfigApplied() {
 export default async function globalSetup() {
   console.log("\n");
 
-  let gelServerProc: ChildProcess | null = null;
-  const gelServerAlive = new Event();
+  let backendServerProc: ChildProcess | null = null;
+  const backendServerAlive = new Event();
   let usingExistingDevServer = false;
 
   if (await checkBackendAlive()) {
     console.log("Re-using backend server already running on 5656");
     usingExistingDevServer = true;
-    gelServerAlive.set();
+    backendServerAlive.set();
   } else {
     console.log("Starting backend server...");
 
-    const srvcmd = process.env.BACKEND_SERVER_BIN ?? "edgedb-server";
+    const srvcmd = process.env.BACKEND_SERVER_BIN ?? "backend-server";
 
     const args = process.env.CI
       ? [
@@ -115,10 +115,10 @@ export default async function globalSetup() {
         ]
       : ["--devmode"];
 
-    gelServerProc = spawn(srvcmd, args) as ChildProcess;
-    gelServerProc.once("close", (code) => {
-      if (!gelServerAlive.done) {
-        gelServerAlive.setError(
+    backendServerProc = spawn(srvcmd, args) as ChildProcess;
+    backendServerProc.once("close", (code) => {
+      if (!backendServerAlive.done) {
+        backendServerAlive.setError(
           `Backend server failed to start with exit code: ${code}`
         );
       }
@@ -126,7 +126,7 @@ export default async function globalSetup() {
     waitUntilAlive(
       checkBackendAlive,
       "Backend server startup timed out",
-      gelServerAlive
+      backendServerAlive
     );
   }
 
@@ -159,8 +159,8 @@ export default async function globalSetup() {
     uiServerAlive.wait().then(() => {
       if (uiServerProc) console.log("...UI server running");
     }),
-    gelServerAlive.wait().then(() => {
-      if (gelServerProc) console.log("...Backend server running");
+    backendServerAlive.wait().then(() => {
+      if (backendServerProc) console.log("...Backend server running");
     }),
   ]);
 
@@ -198,7 +198,7 @@ export default async function globalSetup() {
   console.log("... Done");
 
   globalThis.uiServerProc = uiServerProc;
-  globalThis.gelServerProc = gelServerProc;
+  globalThis.backendServerProc = backendServerProc;
 
   console.log("\n");
 }

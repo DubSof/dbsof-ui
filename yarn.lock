@@ -214,9 +214,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dbsof/lang-edgeql@workspace:shared/lang-edgeql":
+"@dbsof/lang-query@workspace:shared/lang-query":
   version: 0.0.0-use.local
-  resolution: "@dbsof/lang-edgeql@workspace:shared/lang-edgeql"
+  resolution: "@dbsof/lang-query@workspace:shared/lang-query"
   dependencies:
     "@lezer/generator": ^1.7.0
     "@lezer/highlight": ^1.2.0

@@ -11,7 +11,7 @@ import {
   parseWKT,
   RelativeDuration,
   SparseVector,
-} from "@dbsof/platform/gel";
+} from "@dbsof/platform/client";
 
 const parsers: {
   [typename: string]: (val: string, typeArgs: string[] | null) => any;

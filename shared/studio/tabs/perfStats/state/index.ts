@@ -10,7 +10,7 @@ import {
   paramsQueryCtx,
   QueryParamsEditor,
 } from "../../queryEditor/state/parameters";
-import {Language} from "@dbsof/platform/gel";
+import {Language} from "@dbsof/platform/client";
 import {calculateHistogram} from "../utils";
 
 export type QueryType = "EdgeQL" | "SQL";
@@ -59,9 +59,9 @@ export enum TagFilterGroup {
 }
 
 function getTagGroup(tag: string | null): TagFilterGroup {
-  return tag === "gel/repl" || tag === "gel/webrepl"
+  return tag === "studio/repl" || tag === "studio/webrepl"
     ? TagFilterGroup.Repl
-    : tag?.startsWith("gel/")
+    : tag?.startsWith("studio/")
     ? TagFilterGroup.Internal
     : TagFilterGroup.App;
 }
@@ -119,11 +119,11 @@ export class PerfStatsState extends Model({
   get allTags() {
     const groups: {[key in TagFilterGroup]: string[]} = {
       [TagFilterGroup.App]: [""],
-      [TagFilterGroup.Repl]: ["gel/repl", "gel/webrepl"],
+      [TagFilterGroup.Repl]: ["studio/repl", "studio/webrepl"],
       [TagFilterGroup.Internal]: [],
     };
     const tags = new Set(this.stats?.map((stat) => stat.tag));
-    for (const tag of [null, "gel/repl", "gel/webrepl"]) {
+    for (const tag of [null, "studio/repl", "studio/webrepl"]) {
       tags.delete(tag);
     }
     for (const tag of [...tags]) {

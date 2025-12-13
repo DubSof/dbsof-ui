@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {HexColorPicker} from "react-colorful";
-import {encodeB64} from "@dbsof/platform/gel";
+import {encodeB64} from "@dbsof/platform/client";
 
 import cn from "@dbsof/common/utils/classNames";
 
@@ -33,7 +33,7 @@ export const ConfigTab = observer(function ConfigTab() {
           <b>Need help integrating Gel Auth into your app?</b>
           <br />
           Check out the{" "}
-          <a href="https://www.geldata.com/p/auth-ext-docs" target="_blank">
+          <a href="https://example.com/docs/auth" target="_blank">
             auth extension docs
           </a>
           , also here are some useful URLs:

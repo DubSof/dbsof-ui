@@ -7,11 +7,11 @@ import {
   GelError,
   SHOULD_RETRY,
   TransactionConflictError,
-} from "@dbsof/platform/gel";
-import {Options} from "@dbsof/platform/gel";
-import LRU from "@dbsof/platform/gel";
-import {Capabilities} from "@dbsof/platform/gel";
-import {AdminUIFetchConnection} from "@dbsof/platform/gel";
+} from "@dbsof/platform/client";
+import {Options} from "@dbsof/platform/client";
+import LRU from "@dbsof/platform/client";
+import {Capabilities} from "@dbsof/platform/client";
+import {AdminUIFetchConnection} from "@dbsof/platform/client";
 
 import {
   Cardinality,
@@ -19,13 +19,13 @@ import {
   OutputFormat,
   ProtocolVersion,
   QueryOptions,
-} from "@dbsof/platform/gel";
-import {ICodec} from "@dbsof/platform/gel";
-import {sleep} from "@dbsof/platform/gel";
+} from "@dbsof/platform/client";
+import {ICodec} from "@dbsof/platform/client";
+import {sleep} from "@dbsof/platform/client";
 
 import {
   decode,
-  EdgeDBSet,
+  ResultSet,
   QueryParams,
   codecsRegistry,
   baseOptions,
@@ -50,7 +50,7 @@ export interface ConnectConfig {
 }
 
 interface QueryResult {
-  result: EdgeDBSet | null;
+  result: ResultSet | null;
   duration: QueryDuration;
   outCodecBuf: Uint8Array;
   resultBuf: Uint8Array;
@@ -133,7 +133,7 @@ export function createAuthenticatedFetch({
     const headers = new Headers(init?.headers);
     const user = authProvider.getAuthUser?.();
     if (user) {
-      headers.append("X-EdgeDB-User", user);
+      headers.append("X-Studio-User", user);
     }
     headers.append("Authorization", `Bearer ${authProvider.getAuthToken()}`);
 
@@ -212,7 +212,7 @@ export class Connection {
         }, {} as {[key: string]: any})
       );
     }
-    return setQueryTag(state, "gel/ui");
+    return setQueryTag(state, "studio/ui");
   }
 
   hasRolePermissions(...perms: string[]): boolean {
@@ -397,10 +397,10 @@ export class Connection {
         ) {
           state = state.withConfig({apply_access_policies: false});
         }
-        state = setQueryTag(state, "gel/ui");
+        state = setQueryTag(state, "studio/ui");
       }
       if (opts.userQuery) {
-        state = setQueryTag(state, "gel/webrepl");
+        state = setQueryTag(state, "studio/webrepl");
       } else {
         state = state.withConfig({force_database_error: "false"});
       }

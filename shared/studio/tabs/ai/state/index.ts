@@ -79,7 +79,7 @@ export class AIAdminState extends Model({
   showConfigPanel: prop(false).withSetter(),
 }) {
   onAttachedToRootStore() {
-    const configKey = `edgedbAIPlaygroundConfig-${instanceCtx.get(this)!
+    const configKey = `dbsofAIPlaygroundConfig-${instanceCtx.get(this)!
       .instanceId!}/${dbCtx.get(this)!.name}`;
 
     const configJSON = localStorage.getItem(configKey);

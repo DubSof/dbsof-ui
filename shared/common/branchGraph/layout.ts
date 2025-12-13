@@ -1,5 +1,5 @@
 import * as z from "zod";
-import {AuthenticationError} from "@dbsof/platform/gel";
+import {AuthenticationError} from "@dbsof/platform/client";
 
 import {InstanceState} from "@dbsof/studio/state/instance";
 import {
@@ -9,7 +9,7 @@ import {
 
 // clean up old cached branch graph data
 Object.keys(localStorage)
-  .filter((key) => key.startsWith("edgedb-branch-graph-"))
+  .filter((key) => key.startsWith("dbsof-branch-graph-"))
   .forEach((key) => {
     localStorage.removeItem(key);
   });

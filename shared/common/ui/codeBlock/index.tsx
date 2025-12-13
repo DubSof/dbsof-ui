@@ -5,7 +5,7 @@ import {Tree} from "@lezer/common";
 import {Language} from "@codemirror/language";
 import {highlightTree} from "@lezer/highlight";
 
-import {edgeqlLanguage} from "@dbsof/lang-edgeql";
+import {queryLanguage} from "@dbsof/lang-query";
 import {highlightStyle} from "@dbsof/code-editor/theme";
 
 if (highlightStyle.module) {
@@ -35,7 +35,7 @@ export default function CodeBlock({
   inline,
   ...otherProps
 }: React.HTMLAttributes<HTMLPreElement> & CodeBlockProps) {
-  const tree = (language ?? edgeqlLanguage).parser.parse(code);
+  const tree = (language ?? queryLanguage).parser.parse(code);
 
   const html: (string | JSX.Element)[] = [];
 

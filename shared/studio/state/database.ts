@@ -36,14 +36,14 @@ import {
   SchemaGlobal,
   SchemaOperator,
 } from "@dbsof/common/schemaData";
-import {EdgeDBVersion} from "@dbsof/common/schemaData/utils";
+import {SchemaVersion} from "@dbsof/common/schemaData/utils";
 
 import {fetchSchemaData, storeSchemaData} from "../idbStore";
 
 import {instanceCtx} from "./instance";
 import {Capabilities, connCtx, Connection} from "./connection";
 import {SessionState, sessionStateCtx} from "./sessionState";
-import {AuthenticationError} from "@dbsof/platform/gel";
+import {AuthenticationError} from "@dbsof/platform/client";
 
 export const dbCtx = createMobxContext<DatabaseState>();
 
@@ -295,12 +295,12 @@ export class DatabaseState extends Model({
         return;
       }
 
-      const edgedbVersion = [
+      const schemaVersion = [
         Number(schemaInfo.version.major),
         Number(schemaInfo.version.minor),
         schemaInfo.version.stage as any,
         Number(schemaInfo.version.stage_no),
-      ] as EdgeDBVersion;
+      ] as SchemaVersion;
 
       let rawData: RawIntrospectionResult;
       if (
@@ -313,7 +313,7 @@ export class DatabaseState extends Model({
         try {
           rawData = yield* _await(
             conn
-              .query(getIntrospectionQuery(edgedbVersion), undefined, {
+              .query(getIntrospectionQuery(schemaVersion), undefined, {
                 ignoreSessionConfig: true,
                 blocking: true,
               })
@@ -344,7 +344,7 @@ export class DatabaseState extends Model({
         aliases,
         globals,
         extensions,
-      } = buildTypesGraph(rawData, edgedbVersion);
+      } = buildTypesGraph(rawData, schemaVersion);
 
       const schemaData: SchemaData = {
         objects: new Map(

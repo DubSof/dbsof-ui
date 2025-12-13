@@ -1,10 +1,10 @@
-import {_CodecsRegistry, Codecs, LocalDateTime} from "@dbsof/platform/gel";
-import {Options} from "@dbsof/platform/gel";
-import {ProtocolVersion, QueryArgs} from "@dbsof/platform/gel";
-import {decode as _decode, EdgeDBSet} from "@dbsof/common/decodeRawBuffer";
-import {localDateInstances} from "@dbsof/platform/gel";
+import {_CodecsRegistry, Codecs, LocalDateTime} from "@dbsof/platform/client";
+import {Options} from "@dbsof/platform/client";
+import {ProtocolVersion, QueryArgs} from "@dbsof/platform/client";
+import {decode as _decode, ResultSet} from "@dbsof/common/decodeRawBuffer";
+import {localDateInstances} from "@dbsof/platform/client";
 
-export type {EdgeDBSet};
+export type {ResultSet};
 
 function newCodecsRegistry() {
   return new _CodecsRegistry();
@@ -87,7 +87,7 @@ export function decode(
   options: Options,
   protocolVersion: ProtocolVersion,
   newCodec: boolean = false
-): EdgeDBSet | null {
+): ResultSet | null {
   return _decode(
     newCodec ? newCodecsRegistry() : codecsRegistry,
     outCodecBuf,

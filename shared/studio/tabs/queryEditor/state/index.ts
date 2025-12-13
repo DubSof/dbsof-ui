@@ -30,7 +30,7 @@ import {
   QueryResultData,
 } from "../../../idbStore";
 
-import {EdgeDBSet, baseOptions, decode} from "../../../utils/decodeRawBuffer";
+import {ResultSet, baseOptions, decode} from "../../../utils/decodeRawBuffer";
 import {
   ErrorDetails,
   extractErrorDetails,
@@ -58,12 +58,12 @@ import {
   createExplainState,
   ExplainState,
 } from "../../../components/explainVis/state";
-import {Language, ProtocolVersion} from "@dbsof/platform/gel";
+import {Language, ProtocolVersion} from "@dbsof/platform/client";
 import {
   createResultGridState,
   ResultGridState,
 } from "@dbsof/common/components/resultGrid";
-import LRU from "@dbsof/platform/gel";
+import LRU from "@dbsof/platform/client";
 
 export enum EditorKind {
   EdgeQL,
@@ -117,7 +117,7 @@ export class QueryHistoryResultItem extends ExtendedModel(QueryHistoryItem, {
     return queryEditorCtx.get(this)!;
   }
 
-  getInspectorState(data: EdgeDBSet) {
+  getInspectorState(data: ResultSet) {
     const queryEditor = this.queryEditor;
 
     let state = resultInspectorCache.get(this.$modelId);
@@ -134,7 +134,7 @@ export class QueryHistoryResultItem extends ExtendedModel(QueryHistoryItem, {
     return state;
   }
 
-  getResultGridState(data: EdgeDBSet) {
+  getResultGridState(data: ResultSet) {
     let state = resultGridStateCache.get(this.$modelId);
     if (!state) {
       state = createResultGridState(data._codec, data, this.implicitLimit);
@@ -144,7 +144,7 @@ export class QueryHistoryResultItem extends ExtendedModel(QueryHistoryItem, {
     return state;
   }
 
-  getExplainState(data: EdgeDBSet) {
+  getExplainState(data: ResultSet) {
     let state = explainStateCache.get(this.$modelId);
     if (!state) {
       state = createExplainState(data[0]);
@@ -170,7 +170,7 @@ export const queryEditorCtx = createMobxContext<QueryEditor>();
 
 @model("QueryEditor")
 export class QueryEditor extends Model({
-  _edgeqlParamsEditor: prop(
+  _queryParamsEditor: prop(
     () => new QueryParamsEditor({lang: Language.EDGEQL})
   ),
   _sqlParamsEditor: prop(() => new QueryParamsEditor({lang: Language.SQL})),
@@ -237,7 +237,7 @@ export class QueryEditor extends Model({
   @computed
   get paramsEditor() {
     return this.selectedEditor === EditorKind.EdgeQL
-      ? this._edgeqlParamsEditor
+      ? this._queryParamsEditor
       : this.selectedEditor === EditorKind.SQL
       ? this._sqlParamsEditor
       : null;
@@ -330,7 +330,7 @@ export class QueryEditor extends Model({
     queryEditorCtx.set(this, this);
 
     paramsQueryCtx.setComputed(
-      this._edgeqlParamsEditor,
+      this._queryParamsEditor,
       () => this.currentQueryData[EditorKind.EdgeQL]
     );
     paramsQueryCtx.setComputed(
@@ -390,7 +390,7 @@ export class QueryEditor extends Model({
     this._fetchingHistory = false;
   });
 
-  resultDataCache = new LRU<string, Promise<EdgeDBSet | null>>({capacity: 20});
+  resultDataCache = new LRU<string, Promise<ResultSet | null>>({capacity: 20});
 
   @observable.ref
   extendedViewerItem: Item | null = null;
@@ -400,7 +400,7 @@ export class QueryEditor extends Model({
     this.extendedViewerItem = item;
   }
 
-  async getResultData(itemId: string): Promise<EdgeDBSet | null> {
+  async getResultData(itemId: string): Promise<ResultSet | null> {
     let data = this.resultDataCache.get(itemId);
     if (!data) {
       data = fetchResultData(itemId).then((resultData) =>
@@ -463,7 +463,7 @@ export class QueryEditor extends Model({
       selectedEditor: this.selectedEditor,
       [EditorKind.EdgeQL]: {
         query: current[EditorKind.EdgeQL],
-        params: frozen(this._edgeqlParamsEditor.serializeParamsData()),
+        params: frozen(this._queryParamsEditor.serializeParamsData()),
         isEdited: this.queryIsEdited[EditorKind.EdgeQL],
         result: this.currentResults[EditorKind.EdgeQL],
       },
@@ -492,7 +492,7 @@ export class QueryEditor extends Model({
         [EditorKind.VisualBuilder]: draft[EditorKind.VisualBuilder].state,
       };
 
-      this._edgeqlParamsEditor.restoreParamsData(
+      this._queryParamsEditor.restoreParamsData(
         draft[EditorKind.EdgeQL].params?.data
       );
       this._sqlParamsEditor.restoreParamsData(
@@ -573,7 +573,7 @@ export class QueryEditor extends Model({
           );
           (queryData.data.kind === EditorKind.SQL
             ? this._sqlParamsEditor
-            : this._edgeqlParamsEditor
+            : this._queryParamsEditor
           ).restoreParamsData(queryData.data.params);
           break;
         case EditorKind.VisualBuilder:
@@ -628,7 +628,7 @@ export class QueryEditor extends Model({
     thumbnailData: ThumbnailData;
   } & (
     | {
-        result: EdgeDBSet | null;
+        result: ResultSet | null;
         outCodecBuf: Uint8Array;
         resultBuf: Uint8Array;
         protoVer: ProtocolVersion;

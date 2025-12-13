@@ -1,4 +1,4 @@
-import * as PostGIS from "@dbsof/platform/gel";
+import * as PostGIS from "@dbsof/platform/client";
 import {
   Geometry,
   Point,

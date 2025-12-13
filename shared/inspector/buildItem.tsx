@@ -1,10 +1,10 @@
 import cn from "@dbsof/common/utils/classNames";
 
-import {_ICodec} from "@dbsof/platform/gel";
-import {CodecKind} from "@dbsof/platform/gel";
-import {ObjectCodec} from "@dbsof/platform/gel";
-import {NamedTupleCodec} from "@dbsof/platform/gel";
-import {RecordCodec} from "@dbsof/platform/gel";
+import {_ICodec} from "@dbsof/platform/client";
+import {CodecKind} from "@dbsof/platform/client";
+import {ObjectCodec} from "@dbsof/platform/client";
+import {NamedTupleCodec} from "@dbsof/platform/client";
+import {RecordCodec} from "@dbsof/platform/client";
 
 import {buildScalarItem} from "./buildScalar";
 

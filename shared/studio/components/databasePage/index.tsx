@@ -84,8 +84,8 @@ function ErrorFallback({error}: FallbackProps) {
       </h2>
       <p>
         Please consider opening an issue at{" "}
-        <a href="https://github.com/edgedb/edgedb-studio/issues/new">
-          https://github.com/edgedb/edgedb-studio/issues/new
+        <a href="https://example.com/dbsof-ui/issues/new">
+          https://example.com/dbsof-ui/issues/new
         </a>{" "}
         with the error details below.
       </p>

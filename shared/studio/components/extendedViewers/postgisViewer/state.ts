@@ -9,7 +9,7 @@ import {lightLayers, darkLayers} from "./styles/layers";
 import {Theme} from "@dbsof/common/hooks/useTheme";
 import {assertNever} from "@dbsof/common/utils/assertNever";
 
-import * as PostGIS from "@dbsof/platform/gel";
+import * as PostGIS from "@dbsof/platform/client";
 import * as geojson from "./editableGeom/geojsonTypes";
 import {
   EditableGeometry,

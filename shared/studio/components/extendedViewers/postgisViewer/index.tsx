@@ -7,7 +7,7 @@ import cn from "@dbsof/common/utils/classNames";
 
 import styles from "./postgisViewer.module.scss";
 import {useTheme} from "@dbsof/common/hooks/useTheme";
-import {Geometry, Box2D, Box3D} from "@dbsof/platform/gel";
+import {Geometry, Box2D, Box3D} from "@dbsof/platform/client";
 import {
   createPostgisEditorState,
   MAX_M_RADIUS,

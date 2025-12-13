@@ -1,6 +1,6 @@
 import {SyntaxNode} from "@lezer/common";
 
-import {parser as edgeqlParser} from "@dbsof/lang-edgeql";
+import {parser as queryParser} from "@dbsof/lang-query";
 import {PostgreSQL, sql} from "@codemirror/lang-sql";
 import {KnownScalarTypes, SchemaScalarType} from "@dbsof/common/schemaData";
 
@@ -13,9 +13,9 @@ import {
   serializePrimitiveType,
 } from "../../../components/dataEditor/utils";
 import {Connection} from "../../../state/connection";
-import {Cardinality, Language} from "@dbsof/platform/gel";
-import {ObjectCodec} from "@dbsof/platform/gel";
-import {ICodec} from "@dbsof/platform/gel";
+import {Cardinality, Language} from "@dbsof/platform/client";
+import {ObjectCodec} from "@dbsof/platform/client";
+import {ICodec} from "@dbsof/platform/client";
 
 export type ResolvedParameter =
   | {
@@ -199,7 +199,7 @@ export function extractEdgeQLQueryParameters(
   schemaScalars: Map<string, SchemaScalarType>
 ): Map<string, ResolvedParameter> | null {
   try {
-    const syntaxTree = edgeqlParser.parse(query);
+    const syntaxTree = queryParser.parse(query);
 
     const extractedParams: ResolvedParameter[] = getAllChildren(
       syntaxTree.topNode,

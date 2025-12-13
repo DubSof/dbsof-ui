@@ -40,7 +40,7 @@ export function InfoCards({
             <InfoCard
           title={`Learn ${productName}`}
           icon={<DocsIcon />}
-          link="https://docs.geldata.com"
+          link="https://example.com/docs"
         >
           Check out the docs to learn everything you need to know about
           {` ${productName},`} from helpful guides to full API reference docs.
@@ -68,18 +68,18 @@ export function InfoCards({
           ),
         }
       : null,
-    data?.latestEdgeDBVersion &&
+    data?.latestReleaseVersion &&
     currentVersion &&
-    (data.latestEdgeDBVersion.major > currentVersion.major ||
-      (data.latestEdgeDBVersion.major === currentVersion.major &&
-        data.latestEdgeDBVersion.minor > currentVersion.minor))
+    (data.latestReleaseVersion.major > currentVersion.major ||
+      (data.latestReleaseVersion.major === currentVersion.major &&
+        data.latestReleaseVersion.minor > currentVersion.minor))
       ? {
           priority: 3,
           card: (
             <InfoCard
-              title={`${productName} ${data.latestEdgeDBVersion.major}.${data.latestEdgeDBVersion.minor} is available`}
+              title={`${productName} ${data.latestReleaseVersion.major}.${data.latestReleaseVersion.minor} is available`}
               icon={<UpgradeIcon />}
-              link={`https://www.geldata.com/p/changelog/${data.latestEdgeDBVersion.major}_x`}
+              link={`https://example.com/changelog/${data.latestReleaseVersion.major}`}
             >
               This instance is ready to update to the latest version of
               {` ${productName}`} {" "}

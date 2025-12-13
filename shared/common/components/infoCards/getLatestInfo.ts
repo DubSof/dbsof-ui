@@ -17,7 +17,7 @@ const latestInfoType = z.object({
     title: z.string(),
     url: z.string(),
   }),
-  latestEdgeDBVersion: z.string().transform((ver) => {
+  latestReleaseVersion: z.string().transform((ver) => {
     const [major, minor] = ver.split(".").map((n) => parseInt(n, 10));
     return {major, minor};
   }),

@@ -42,7 +42,7 @@ export const InstancePage = observer(function InstancePage() {
         !instanceState.databases.includes("_example") ? (
           <div className={styles.exampleDatabaseCard} onClick={() => {}}>
             <span className={styles.cardHeading}>
-              First time using EdgeDB?
+              First time using the studio?
             </span>
             <Button
               className={styles.cardButton}

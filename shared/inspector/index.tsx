@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {VariableSizeList as List, ListChildComponentProps} from "react-window";
-import {_ICodec} from "@dbsof/platform/gel";
+import {_ICodec} from "@dbsof/platform/client";
 
 import cn from "@dbsof/common/utils/classNames";
 import {

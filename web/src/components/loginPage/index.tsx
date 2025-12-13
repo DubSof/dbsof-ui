@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 
-import {getHTTPSCRAMAuth} from "@dbsof/platform/gel";
-import {cryptoUtils} from "@dbsof/platform/gel";
+import {getHTTPSCRAMAuth} from "@dbsof/platform/client";
+import {cryptoUtils} from "@dbsof/platform/client";
 
 import {
   ModalPanel,
@@ -82,7 +82,7 @@ export default function LoginPage() {
               <div>
                 <span>It looks like you're running Gel locally.</span>
                 <br /> If you created this instance using the Gel CLI, the
-                easiest way to login is by running the <code>gel ui</code>{" "}
+                easiest way to login is by running your platform's UI launcher
                 command from your project directory.
               </div>
             </div>

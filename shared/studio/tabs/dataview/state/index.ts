@@ -18,10 +18,10 @@ import {NavigateFunction} from "../../../hooks/dbRoute";
 
 import {Text} from "@codemirror/state";
 
-import {CardinalityViolationError, _ICodec} from "@dbsof/platform/gel";
-import {ObjectCodec} from "@dbsof/platform/gel";
+import {CardinalityViolationError, _ICodec} from "@dbsof/platform/client";
+import {ObjectCodec} from "@dbsof/platform/client";
 
-import {EdgeDBSet} from "../../../utils/decodeRawBuffer";
+import {ResultSet} from "../../../utils/decodeRawBuffer";
 
 import {ObservableLRU} from "../../../state/utils/lru";
 
@@ -915,7 +915,7 @@ export class DataInspector extends Model({
 
   // data fetching
 
-  data = new ObservableLRU<number, EdgeDBSet>(20);
+  data = new ObservableLRU<number, ResultSet>(20);
 
   @observable.ref
   dataCodecs: Map<string, _ICodec> | null = null;
@@ -1069,7 +1069,7 @@ export class DataInspector extends Model({
   });
 
   @modelAction
-  _setData(offset: number, data: EdgeDBSet) {
+  _setData(offset: number, data: ResultSet) {
     this.data.set(offset, data);
 
     const endCount = offset * fetchBlockSize + data.length;

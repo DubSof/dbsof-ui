@@ -10,7 +10,7 @@ import {
 import {observable, computed, action, autorun} from "mobx";
 import {Text} from "@codemirror/state";
 
-import {Language} from "@dbsof/platform/gel";
+import {Language} from "@dbsof/platform/client";
 
 import {
   deserializeResolvedParameter,
@@ -261,7 +261,7 @@ export class QueryParamsEditor extends Model({
         }
         this.updateCurrentParams(deserializedParams);
       } else {
-        // should be edgeql query so this is not async
+        // should be a query statement so this is not async
         this._extractQueryParameters();
       }
 

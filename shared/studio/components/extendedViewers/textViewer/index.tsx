@@ -28,7 +28,7 @@ export const TextViewer = memo(function TextViewer({data}: TextViewerProps) {
   const editorRef = useRef<CodeEditorRef>(null);
 
   const [state, setState] = usePersistedState(
-    "edgedbStudioExtendedTextViewer",
+    "dbsofStudioExtendedTextViewer",
     {linewrap: false, renderWhitespace: false}
   );
 

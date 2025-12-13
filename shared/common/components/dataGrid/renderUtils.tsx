@@ -1,9 +1,9 @@
 import {Fragment} from "react";
 
-import {ICodec} from "@dbsof/platform/gel";
-import {EnumCodec} from "@dbsof/platform/gel";
-import {NamedTupleCodec} from "@dbsof/platform/gel";
-import {MultiRangeCodec, RangeCodec} from "@dbsof/platform/gel";
+import {ICodec} from "@dbsof/platform/client";
+import {EnumCodec} from "@dbsof/platform/client";
+import {NamedTupleCodec} from "@dbsof/platform/client";
+import {MultiRangeCodec, RangeCodec} from "@dbsof/platform/client";
 
 import {renderValue} from "@dbsof/inspector/buildScalar";
 

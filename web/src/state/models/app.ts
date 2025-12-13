@@ -3,15 +3,15 @@ import {createContext, Model, model, prop} from "mobx-keystone";
 import {InstanceState} from "@dbsof/studio/state/instance";
 
 export const serverUrl = import.meta.env.DEV
-  ? import.meta.env.VITE_GEL_SERVER_URL
-    ? `http://${import.meta.env.VITE_GEL_SERVER_URL}`
+  ? import.meta.env.VITE_BACKEND_SERVER_URL
+    ? `http://${import.meta.env.VITE_BACKEND_SERVER_URL}`
     : "http://localhost:5656"
   : window.location.origin;
 
 const url = new URL(window.location.toString());
 
-const TOKEN_KEY = "edgedbAuthToken";
-const USERNAME_KEY = "edgedbAuthUsername";
+const TOKEN_KEY = "dbsofAuthToken";
+const USERNAME_KEY = "dbsofAuthUsername";
 
 let authToken: string | null = null;
 let authUsername: string | null = null;

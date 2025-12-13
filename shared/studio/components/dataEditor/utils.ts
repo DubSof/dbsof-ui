@@ -1,4 +1,4 @@
-import {MultiRange, Range} from "@dbsof/platform/gel";
+import {MultiRange, Range} from "@dbsof/platform/client";
 
 import {SchemaScalarType} from "@dbsof/common/schemaData";
 import {assertNever} from "@dbsof/common/utils/assertNever";

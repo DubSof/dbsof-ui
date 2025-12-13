@@ -222,7 +222,7 @@ export const BranchGraph = observer(function BranchGraph({
                   })}
                   onClick={() => {
                     localStorage.removeItem(
-                      `edgedb-branch-graph-${instanceId}`
+                      `dbsof-branch-graph-${instanceId}`
                     );
                     setRefreshing(true);
                   }}

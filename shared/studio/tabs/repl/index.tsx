@@ -303,7 +303,7 @@ const ReplInput = observer(function ReplInput() {
       customExtensions: [
         replPrompt({
           dbName: dbState.name,
-          inputMode: replState.language === ReplLang.SQL ? "sql" : "edgeql",
+          inputMode: replState.language === ReplLang.SQL ? "sql" : "query",
         }),
       ],
     });
@@ -833,7 +833,7 @@ const ReplHistoryItem = observer(function ReplHistoryItem({
         <div className={styles.historyQuery}>
           <div className={styles.historyPrompt}>
             {dbName}
-            <span>{item.lang === ReplLang.SQL ? "[sql]" : "[edgeql]"}</span>
+            <span>{item.lang === ReplLang.SQL ? "[sql]" : "[query]"}</span>
             {">\n"}
             {Array((truncateQuery ? 20 : queryLines) - 1)
               .fill(".".repeat(promptLength))

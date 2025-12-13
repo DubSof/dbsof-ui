@@ -122,12 +122,12 @@ export const DatabaseDashboard = observer(function DatabaseDashboard() {
           </div>
 
           <div className={styles.docButtons}>
-            <a href="https://www.geldata.com/p/quickstart-docs">
+            <a href="https://example.com/docs/quickstart">
               <DocsQuickstartIcon />
               <span>5-min Quickstart</span>
             </a>
 
-            <a href="https://docs.geldata.com" target="_blank">
+            <a href="https://example.com/docs" target="_blank">
               <DocsIcon />
               <span>Documentation</span>
             </a>

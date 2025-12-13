@@ -63,13 +63,13 @@ import {CodeEditorExplainContexts} from "../../components/explainVis/codeEditorC
 import {ExplainStateType} from "../../components/explainVis/state";
 import {LabelsSwitch, switchState} from "@dbsof/common/ui/switch";
 import {useIsMobile} from "@dbsof/common/hooks/useMobile";
-import {EdgeDBSet} from "@dbsof/common/decodeRawBuffer";
-import {ObjectCodec} from "@dbsof/platform/gel";
-import {ICodec} from "@dbsof/platform/gel";
+import {ResultSet} from "@dbsof/common/decodeRawBuffer";
+import {ObjectCodec} from "@dbsof/platform/client";
+import {ICodec} from "@dbsof/platform/client";
 import {SplitViewDirection} from "@dbsof/common/ui/splitView/model";
 import {createPortal} from "react-dom";
 import {RelativeTime} from "@dbsof/common/utils/relativeTime";
-import {RecordCodec} from "@dbsof/platform/gel";
+import {RecordCodec} from "@dbsof/platform/client";
 import {ErrorDetails} from "../../utils/extractErrorDetails";
 
 export const QueryEditorView = observer(function QueryEditorView() {
@@ -464,7 +464,7 @@ const QueryResult = observer(function QueryResult({
   outputModeTargetRef: RefObject<HTMLDivElement>;
 }) {
   const isMobile = useIsMobile();
-  const [data, setData] = useState<EdgeDBSet | null>(null);
+  const [data, setData] = useState<ResultSet | null>(null);
 
   useEffect(() => {
     if (

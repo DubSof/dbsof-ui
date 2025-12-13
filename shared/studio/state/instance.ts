@@ -14,7 +14,7 @@ import {
   ModelTypeInfo,
 } from "mobx-keystone";
 
-import {DuplicateDatabaseDefinitionError} from "@dbsof/platform/gel";
+import {DuplicateDatabaseDefinitionError} from "@dbsof/platform/client";
 
 import {cleanupOldSchemaDataForInstance} from "../idbStore";
 
@@ -99,7 +99,7 @@ export class InstanceState extends Model({
     single?: false
   ): Promise<T[] | null>;
   private async _sysConnFetch(query: string, single = false) {
-    const data = (await this.getConnection("__edgedbsys__").query(query))
+    const data = (await this.getConnection("__system__").query(query))
       .result;
     return data && single ? data[0] ?? null : data;
   }
@@ -190,7 +190,7 @@ export class InstanceState extends Model({
             getAuthUser: () =>
               this._authProvider.getAuthUser?.() ??
               this.currentRole ??
-              "edgedb",
+              "default",
             getUserRole: () => this.userRole,
           },
         },
