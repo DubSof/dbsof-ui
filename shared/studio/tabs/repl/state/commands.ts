@@ -1,4 +1,4 @@
-import {SchemaObjectType, SchemaScalarType} from "@edgedb/common/schemaData";
+import {SchemaObjectType, SchemaScalarType} from "@dbsof/common/schemaData";
 import {Repl, ReplHistoryItem, ReplLang} from ".";
 import {dbCtx} from "../../../state";
 import {instanceCtx} from "../../../state/instance";

@@ -7,11 +7,11 @@ import {
   GelError,
   SHOULD_RETRY,
   TransactionConflictError,
-} from "gel";
-import {Options} from "gel/dist/options";
-import LRU from "gel/dist/primitives/lru";
-import {Capabilities} from "gel/dist/baseConn";
-import {AdminUIFetchConnection} from "gel/dist/fetchConn";
+} from "@dbsof/platform/gel";
+import {Options} from "@dbsof/platform/gel";
+import LRU from "@dbsof/platform/gel";
+import {Capabilities} from "@dbsof/platform/gel";
+import {AdminUIFetchConnection} from "@dbsof/platform/gel";
 
 import {
   Cardinality,
@@ -19,9 +19,9 @@ import {
   OutputFormat,
   ProtocolVersion,
   QueryOptions,
-} from "gel/dist/ifaces";
-import {ICodec} from "gel/dist/codecs/ifaces";
-import {sleep} from "gel/dist/utils";
+} from "@dbsof/platform/gel";
+import {ICodec} from "@dbsof/platform/gel";
+import {sleep} from "@dbsof/platform/gel";
 
 import {
   decode,

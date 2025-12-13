@@ -10,7 +10,7 @@ import {
   SMTPSecurity,
 } from "./state";
 
-import cn from "@edgedb/common/utils/classNames";
+import cn from "@dbsof/common/utils/classNames";
 
 import {
   Button,
@@ -21,8 +21,8 @@ import {
   Select,
   TextInput,
   WarningIcon,
-} from "@edgedb/common/newui";
-import {LoadingSkeleton} from "@edgedb/common/newui/loadingSkeleton";
+} from "@dbsof/common/newui";
+import {LoadingSkeleton} from "@dbsof/common/newui/loadingSkeleton";
 
 import styles from "./authAdmin.module.scss";
 import {
@@ -30,7 +30,7 @@ import {
   InputSkeleton,
   StickyFormControls,
 } from "./shared";
-import Spinner from "@edgedb/common/ui/spinner";
+import Spinner from "@dbsof/common/ui/spinner";
 import {useState} from "react";
 
 export const SMTPConfigTab = observer(function SMTPConfigTab() {

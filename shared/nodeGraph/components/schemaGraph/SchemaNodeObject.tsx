@@ -1,11 +1,11 @@
 import {observer} from "mobx-react-lite";
 
-import {useDBRouter} from "@edgedb/studio/hooks/dbRoute";
+import {useDBRouter} from "@dbsof/studio/hooks/dbRoute";
 import styles from "./schemaGraph.module.scss";
 import {useSchemaState} from "../../state/provider";
 
-import cn from "@edgedb/common/utils/classNames";
-import {stripModuleName} from "@edgedb/common/utils/moduleNames";
+import cn from "@dbsof/common/utils/classNames";
+import {stripModuleName} from "@dbsof/common/utils/moduleNames";
 
 import {ISchemaNodeProps} from "./interfaces";
 

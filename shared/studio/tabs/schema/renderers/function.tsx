@@ -1,8 +1,8 @@
 import {Fragment} from "react";
 import {observer} from "mobx-react-lite";
 
-import {SchemaFunction, SchemaParam} from "@edgedb/common/schemaData";
-import CodeBlock from "@edgedb/common/ui/codeBlock";
+import {SchemaFunction, SchemaParam} from "@dbsof/common/schemaData";
+import CodeBlock from "@dbsof/common/ui/codeBlock";
 
 import {
   Arrow,
@@ -21,7 +21,7 @@ import {SearchMatches} from "../state/textView";
 
 import styles from "../textView.module.scss";
 import {AnnotationRenderer, annotationToSDL} from "./annotation";
-import {paramToSDL} from "@edgedb/common/schemaData/utils";
+import {paramToSDL} from "@dbsof/common/schemaData/utils";
 
 export function SchemaParamRenderer({
   param,

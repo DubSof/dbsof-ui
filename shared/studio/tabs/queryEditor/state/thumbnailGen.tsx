@@ -1,8 +1,8 @@
 import {Language} from "@codemirror/language";
 import {highlightTree} from "@lezer/highlight";
 
-import {edgeqlLanguage} from "@edgedb/lang-edgeql";
-import {highlightStyle} from "@edgedb/code-editor/theme";
+import {edgeqlLanguage} from "@dbsof/lang-edgeql";
+import {highlightStyle} from "@dbsof/code-editor/theme";
 
 enum SyntaxColour {
   base,

@@ -21,7 +21,7 @@ import {
 import {
   RawIntrospectionResult,
   getIntrospectionQuery,
-} from "@edgedb/common/schemaData/queries";
+} from "@dbsof/common/schemaData/queries";
 import {
   buildTypesGraph,
   SchemaType,
@@ -35,15 +35,15 @@ import {
   SchemaAlias,
   SchemaGlobal,
   SchemaOperator,
-} from "@edgedb/common/schemaData";
-import {EdgeDBVersion} from "@edgedb/common/schemaData/utils";
+} from "@dbsof/common/schemaData";
+import {EdgeDBVersion} from "@dbsof/common/schemaData/utils";
 
 import {fetchSchemaData, storeSchemaData} from "../idbStore";
 
 import {instanceCtx} from "./instance";
 import {Capabilities, connCtx, Connection} from "./connection";
 import {SessionState, sessionStateCtx} from "./sessionState";
-import {AuthenticationError} from "gel";
+import {AuthenticationError} from "@dbsof/platform/gel";
 
 export const dbCtx = createMobxContext<DatabaseState>();
 

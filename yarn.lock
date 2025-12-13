@@ -163,9 +163,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@edgedb/code-editor@workspace:*, @edgedb/code-editor@workspace:shared/codeEditor":
+"@dbsof/code-editor@workspace:*, @dbsof/code-editor@workspace:shared/codeEditor":
   version: 0.0.0-use.local
-  resolution: "@edgedb/code-editor@workspace:shared/codeEditor"
+  resolution: "@dbsof/code-editor@workspace:shared/codeEditor"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -179,19 +179,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@edgedb/common@workspace:*, @edgedb/common@workspace:shared/common":
+"@dbsof/common@workspace:*, @dbsof/common@workspace:shared/common":
   version: 0.0.0-use.local
-  resolution: "@edgedb/common@workspace:shared/common"
+  resolution: "@dbsof/common@workspace:shared/common"
   peerDependencies:
-    gel: ^2.0.2
+    "@dbsof/platform": workspace:*
     react: ^18.0.0
     react-dom: ^18.0.0
   languageName: unknown
   linkType: soft
 
-"@edgedb/inspector@workspace:*, @edgedb/inspector@workspace:shared/inspector":
+"@dbsof/inspector@workspace:*, @dbsof/inspector@workspace:shared/inspector":
   version: 0.0.0-use.local
-  resolution: "@edgedb/inspector@workspace:shared/inspector"
+  resolution: "@dbsof/inspector@workspace:shared/inspector"
   dependencies:
     "@types/react-window": ^1.8.8
     assert-never: ^1.2.1
@@ -200,26 +200,34 @@ __metadata:
     mobx-react-lite: ^4.0.0
     react-window: ^1.8.10
   peerDependencies:
-    gel: ^2.0.2
+    "@dbsof/platform": workspace:*
     react: ^18.0.0
     react-dom: ^18.0.0
   languageName: unknown
   linkType: soft
 
-"@edgedb/lang-edgeql@workspace:shared/lang-edgeql":
+"@dbsof/platform@workspace:*, @dbsof/platform@workspace:shared/platform":
   version: 0.0.0-use.local
-  resolution: "@edgedb/lang-edgeql@workspace:shared/lang-edgeql"
+  resolution: "@dbsof/platform@workspace:shared/platform"
+  dependencies:
+    gel: ^2.0.2
+  languageName: unknown
+  linkType: soft
+
+"@dbsof/lang-edgeql@workspace:shared/lang-edgeql":
+  version: 0.0.0-use.local
+  resolution: "@dbsof/lang-edgeql@workspace:shared/lang-edgeql"
   dependencies:
     "@lezer/generator": ^1.7.0
     "@lezer/highlight": ^1.2.0
   languageName: unknown
   linkType: soft
 
-"@edgedb/schema-graph@workspace:*, @edgedb/schema-graph@workspace:shared/schemaGraph":
+"@dbsof/node-graph@workspace:*, @dbsof/node-graph@workspace:shared/nodeGraph":
   version: 0.0.0-use.local
-  resolution: "@edgedb/schema-graph@workspace:shared/schemaGraph"
+  resolution: "@dbsof/node-graph@workspace:shared/nodeGraph"
   dependencies:
-    "@edgedb/common": "workspace:*"
+    "@dbsof/common": "workspace:*"
     "@types/react-transition-group": ^4.4.0
     fastpriorityqueue: ^0.6.3
     fuse.js: ^6.4.1
@@ -229,24 +237,26 @@ __metadata:
     react-transition-group: ^4.4.1
     webcola: ^3.4.0
   peerDependencies:
-    gel: ^2.0.2
+    "@dbsof/platform": workspace:*
+    react: ^18.0.0
+    react-dom: ^18.0.0
     react: ^18.0.0
     react-dom: ^18.0.0
   languageName: unknown
   linkType: soft
 
-"@edgedb/studio@workspace:*, @edgedb/studio@workspace:shared/studio":
+"@dbsof/studio@workspace:*, @dbsof/studio@workspace:shared/studio":
   version: 0.0.0-use.local
-  resolution: "@edgedb/studio@workspace:shared/studio"
+  resolution: "@dbsof/studio@workspace:shared/studio"
   dependencies:
     "@anthropic-ai/sdk": ^0.20.5
     "@codemirror/lang-json": ^6.0.0
     "@codemirror/lang-sql": ^6.8.0
     "@codemirror/lint": ^6.0.0
-    "@edgedb/code-editor": "workspace:*"
-    "@edgedb/common": "workspace:*"
-    "@edgedb/inspector": "workspace:*"
-    "@edgedb/schema-graph": "workspace:*"
+    "@dbsof/code-editor": "workspace:*"
+    "@dbsof/common": "workspace:*"
+    "@dbsof/inspector": "workspace:*"
+    "@dbsof/node-graph": "workspace:*"
     "@fontsource-variable/roboto-flex": ^5.1.0
     "@fontsource-variable/roboto-mono": ^5.1.0
     "@radix-ui/react-tooltip": ^1.0.5
@@ -266,7 +276,7 @@ __metadata:
     react-markdown: ^9.0.1
     react-window: ^1.8.10
   peerDependencies:
-    gel: ^2.0.2
+    "@dbsof/platform": workspace:*
     react: ^18.0.0
     react-dom: ^18.0.0
   languageName: unknown
@@ -5373,14 +5383,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webui@workspace:web":
+"dbsof-web@workspace:web":
   version: 0.0.0-use.local
-  resolution: "webui@workspace:web"
+  resolution: "dbsof-web@workspace:web"
   dependencies:
     "@axe-core/react": ^4.6.0
-    "@edgedb/code-editor": "workspace:*"
-    "@edgedb/common": "workspace:*"
-    "@edgedb/studio": "workspace:*"
+    "@dbsof/code-editor": "workspace:*"
+    "@dbsof/common": "workspace:*"
+    "@dbsof/platform": "workspace:*"
+    "@dbsof/studio": "workspace:*"
     "@eslint/js": ^9.13.0
     "@fontsource-variable/roboto-flex": ^5.1.0
     "@fontsource-variable/roboto-mono": ^5.1.0

@@ -3,11 +3,11 @@ import {observer} from "mobx-react-lite";
 
 import {jsonLanguage, json} from "@codemirror/lang-json";
 
-import cn from "@edgedb/common/utils/classNames";
-import SplitView from "@edgedb/common/ui/splitView";
-import {Theme, useTheme} from "@edgedb/common/hooks/useTheme";
-import {CodeEditor, CodeEditorRef} from "@edgedb/code-editor";
-import CodeBlock from "@edgedb/common/ui/codeBlock";
+import cn from "@dbsof/common/utils/classNames";
+import SplitView from "@dbsof/common/ui/splitView";
+import {Theme, useTheme} from "@dbsof/common/hooks/useTheme";
+import {CodeEditor, CodeEditorRef} from "@dbsof/code-editor";
+import CodeBlock from "@dbsof/common/ui/codeBlock";
 
 import styles from "./graphql.module.scss";
 
@@ -18,7 +18,7 @@ import {GraphQL} from "./state";
 import {GraphQLLanguage} from "./lang";
 
 import {ChevronDownIcon, TabGraphQlIcon} from "../../icons";
-import Button from "@edgedb/common/ui/button";
+import Button from "@dbsof/common/ui/button";
 
 const JSONLang = json();
 

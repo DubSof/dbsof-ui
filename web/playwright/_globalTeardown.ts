@@ -26,10 +26,10 @@ export default async function globalTeardown() {
   const gelServerProc: ChildProcess = globalThis.gelServerProc;
 
   if (gelServerProc) {
-    console.log("Closing Gel server...");
+    console.log("Closing backend server...");
     waits.push(
       killProcess(gelServerProc).then(() =>
-        console.log("...Gel server closed")
+        console.log("...Backend server closed")
       )
     );
   }

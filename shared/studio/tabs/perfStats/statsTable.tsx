@@ -3,7 +3,7 @@ import {observer} from "mobx-react-lite";
 
 import {sql, PostgreSQL} from "@codemirror/lang-sql";
 
-import cn from "@edgedb/common/utils/classNames";
+import cn from "@dbsof/common/utils/classNames";
 
 import {
   Button,
@@ -11,11 +11,11 @@ import {
   FieldHeader,
   SortDescIcon,
   SortIcon,
-} from "@edgedb/common/newui";
-import {CopyButton} from "@edgedb/common/newui/copyButton";
-import CodeBlock from "@edgedb/common/ui/codeBlock";
-import Spinner from "@edgedb/common/ui/spinner";
-import {useIsMobile} from "@edgedb/common/hooks/useMobile";
+} from "@dbsof/common/newui";
+import {CopyButton} from "@dbsof/common/newui/copyButton";
+import CodeBlock from "@dbsof/common/ui/codeBlock";
+import Spinner from "@dbsof/common/ui/spinner";
+import {useIsMobile} from "@dbsof/common/hooks/useMobile";
 
 import {OrderBy, PerfStatsState, QueryStats} from "./state";
 

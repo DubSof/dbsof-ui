@@ -1,8 +1,8 @@
 import {lazy, Suspense} from "react";
 import {observer} from "mobx-react-lite";
 
-import CodeBlock from "@edgedb/common/ui/codeBlock";
-import Spinner from "@edgedb/common/ui/spinner";
+import CodeBlock from "@dbsof/common/ui/codeBlock";
+import Spinner from "@dbsof/common/ui/spinner";
 
 import {useDatabaseState} from "../../state";
 

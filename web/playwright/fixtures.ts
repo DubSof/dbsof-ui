@@ -1,5 +1,5 @@
 import {test as base, type Locator} from "@playwright/test";
-import {type Client, createClient} from "gel";
+import {type Client, createClient} from "@dbsof/platform/gel";
 
 type Fixtures = {
   gelClient: Client;

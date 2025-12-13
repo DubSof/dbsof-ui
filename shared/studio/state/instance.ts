@@ -14,7 +14,7 @@ import {
   ModelTypeInfo,
 } from "mobx-keystone";
 
-import {DuplicateDatabaseDefinitionError} from "gel";
+import {DuplicateDatabaseDefinitionError} from "@dbsof/platform/gel";
 
 import {cleanupOldSchemaDataForInstance} from "../idbStore";
 

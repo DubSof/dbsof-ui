@@ -1,6 +1,6 @@
 import {createContext, Model, model, prop} from "mobx-keystone";
 
-import {InstanceState} from "@edgedb/studio/state/instance";
+import {InstanceState} from "@dbsof/studio/state/instance";
 
 export const serverUrl = import.meta.env.DEV
   ? import.meta.env.VITE_GEL_SERVER_URL

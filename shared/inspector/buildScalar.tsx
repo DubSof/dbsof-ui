@@ -7,9 +7,9 @@ import {
   SparseVector,
   Geometry,
   type AnyGeometry,
-} from "gel";
+} from "@dbsof/platform/gel";
 
-import cn from "@edgedb/common/utils/classNames";
+import cn from "@dbsof/common/utils/classNames";
 import {
   bufferToString,
   float16ArrayToString,
@@ -17,10 +17,10 @@ import {
   formatDatetime,
   prettyPrintJSON,
   sparseVectorToString,
-} from "@edgedb/common/utils/renderJsonResult";
+} from "@dbsof/common/utils/renderJsonResult";
 
-import {EnumCodec} from "gel/dist/codecs/enum";
-import {RangeCodec, MultiRangeCodec} from "gel/dist/codecs/range";
+import {EnumCodec} from "@dbsof/platform/gel";
+import {RangeCodec, MultiRangeCodec} from "@dbsof/platform/gel";
 
 import {Item, ItemType} from "./buildItem";
 

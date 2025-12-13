@@ -1,8 +1,8 @@
 import {SyntaxNode} from "@lezer/common";
 
-import {parser as edgeqlParser} from "@edgedb/lang-edgeql";
+import {parser as edgeqlParser} from "@dbsof/lang-edgeql";
 import {PostgreSQL, sql} from "@codemirror/lang-sql";
-import {KnownScalarTypes, SchemaScalarType} from "@edgedb/common/schemaData";
+import {KnownScalarTypes, SchemaScalarType} from "@dbsof/common/schemaData";
 
 import {getAllChildren, getNodeText} from "../../../utils/syntaxTree";
 import {
@@ -13,9 +13,9 @@ import {
   serializePrimitiveType,
 } from "../../../components/dataEditor/utils";
 import {Connection} from "../../../state/connection";
-import {Cardinality, Language} from "gel/dist/ifaces";
-import {ObjectCodec} from "gel/dist/codecs/object";
-import {ICodec} from "gel/dist/codecs/ifaces";
+import {Cardinality, Language} from "@dbsof/platform/gel";
+import {ObjectCodec} from "@dbsof/platform/gel";
+import {ICodec} from "@dbsof/platform/gel";
 
 export type ResolvedParameter =
   | {

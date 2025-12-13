@@ -1,7 +1,7 @@
-import {GelError} from "gel";
-import {ErrorAttr} from "gel/dist/errors/base";
-import {Language} from "gel/dist/ifaces";
-import {utf8Decoder} from "gel/dist/primitives/buffer";
+import {GelError} from "@dbsof/platform/gel";
+import {ErrorAttr} from "@dbsof/platform/gel";
+import {Language} from "@dbsof/platform/gel";
+import {utf8Decoder} from "@dbsof/platform/gel";
 
 export interface ErrorDetails {
   name: string;

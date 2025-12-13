@@ -1,16 +1,16 @@
 import {useEffect, useRef, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {HexColorPicker} from "react-colorful";
-import {encodeB64} from "gel/dist/primitives/buffer";
+import {encodeB64} from "@dbsof/platform/gel";
 
-import cn from "@edgedb/common/utils/classNames";
+import cn from "@dbsof/common/utils/classNames";
 
 import {useInstanceState} from "../../state/instance";
 import {useDatabaseState, useTabState} from "../../state";
 import {AuthAdminState, DraftAppConfig} from "./state";
 
-import {FieldHeader, TextInput} from "@edgedb/common/newui";
-import {CopyButton} from "@edgedb/common/newui/copyButton";
+import {FieldHeader, TextInput} from "@dbsof/common/newui";
+import {CopyButton} from "@dbsof/common/newui/copyButton";
 
 import {BookIcon} from "../../icons";
 

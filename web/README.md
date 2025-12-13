@@ -1,7 +1,8 @@
-# Gel UI web app
+# DBSOF web app
 
-Note: If you are just looking to use Gel UI, then you don't need to do any of
-these steps, just run the `gel ui` command from your project directory.
+This package contains the browser shell for the DBSOF UI. It is designed to be
+wired up to any backend you choose; the UI runs entirely in the browser and
+expects whatever API adapter you provide during integration time.
 
 ## Development
 
@@ -16,23 +17,9 @@ yarn dev
 
 The app is served at `http://localhost:3002/ui`.
 
-The Gel server needs to be run separately with `cors_allow_origins`
-configured to allow the UI's `localhost:3002` origin:
-
-```sh
-edb server
-
-# Only needs to be run once:
-edb cli configure set cors_allow_origins '*'
-
-```
-
-To customize the Gel server address (if it's not running at the
-default of `localhost:5656`):
-
-```sh
-env VITE_GEL_SERVER_URL="192.168.0.123:5656" yarn dev
-```
+The UI assumes a backend is available but does not start one for you. Point the
+app at your own environment using the `VITE_GEL_SERVER_URL` (or an equivalent
+override you configure) environment variable before running `yarn dev`.
 
 ## UI Tests
 
@@ -48,9 +35,9 @@ To run the UI tests:
 yarn test
 ```
 
-If there is already an instance of an Gel dev server running on port 5656,
-or the UI dev server running on port 3000, then they will be used by the tests.
-If not (or the tests are running in CI), the test runner will start temporary
+If there is already an instance of your dev backend running on port 5656, or
+the UI dev server running on port 3000, then they will be used by the tests. If
+not (or the tests are running in CI), the test runner will start temporary
 instances of them for the duration of the tests.
 
 By default the tests run `chromedriver` in headless mode, but to see the

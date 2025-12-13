@@ -1,4 +1,4 @@
-import {SchemaGlobal, SchemaType} from "@edgedb/common/schemaData";
+import {SchemaGlobal, SchemaType} from "@dbsof/common/schemaData";
 import fuzzysort from "fuzzysort";
 import {action, computed, observable, runInAction, when} from "mobx";
 import {

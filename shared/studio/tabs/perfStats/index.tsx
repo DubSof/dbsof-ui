@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 
-import cn from "@edgedb/common/utils/classNames";
+import cn from "@dbsof/common/utils/classNames";
 
 import {PerfStatsState} from "./state";
 import {DatabaseTabSpec} from "../../components/databasePage";

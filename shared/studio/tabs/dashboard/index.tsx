@@ -10,9 +10,9 @@ import {useDBRouter} from "../../hooks/dbRoute";
 
 import {DocsQuickstartIcon, DocsIcon} from "../../icons/docs";
 
-import {ArrowRightIcon, Button} from "@edgedb/common/newui";
-import {CustomScrollbars} from "@edgedb/common/ui/customScrollbar";
-import Spinner from "@edgedb/common/ui/spinner";
+import {ArrowRightIcon, Button} from "@dbsof/common/newui";
+import {CustomScrollbars} from "@dbsof/common/ui/customScrollbar";
+import Spinner from "@dbsof/common/ui/spinner";
 
 import {
   HeaderDatabaseIcon,

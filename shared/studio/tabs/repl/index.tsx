@@ -13,29 +13,29 @@ import {observer} from "mobx-react-lite";
 
 import {PostgreSQL, sql} from "@codemirror/lang-sql";
 
-import {useInitialValue} from "@edgedb/common/hooks/useInitialValue";
-import {useResize} from "@edgedb/common/hooks/useResize";
-import {Theme, useTheme} from "@edgedb/common/hooks/useTheme";
+import {useInitialValue} from "@dbsof/common/hooks/useInitialValue";
+import {useResize} from "@dbsof/common/hooks/useResize";
+import {Theme, useTheme} from "@dbsof/common/hooks/useTheme";
 
-import CodeBlock from "@edgedb/common/ui/codeBlock";
-import {CustomScrollbars} from "@edgedb/common/ui/customScrollbar";
-import Spinner from "@edgedb/common/ui/spinner";
-import {Button} from "@edgedb/common/newui";
-import cn from "@edgedb/common/utils/classNames";
+import CodeBlock from "@dbsof/common/ui/codeBlock";
+import {CustomScrollbars} from "@dbsof/common/ui/customScrollbar";
+import Spinner from "@dbsof/common/ui/spinner";
+import {Button} from "@dbsof/common/newui";
+import cn from "@dbsof/common/utils/classNames";
 
 import {
   CodeEditorProps,
   CodeEditorRef,
   createCodeEditor,
-} from "@edgedb/code-editor";
+} from "@dbsof/code-editor";
 
 import {
   DEFAULT_LINE_HEIGHT,
   DEFAULT_ROW_HEIGHT,
   InspectorRow,
   useInspectorKeybindings,
-} from "@edgedb/inspector";
-import inspectorStyles from "@edgedb/inspector/inspector.module.scss";
+} from "@dbsof/inspector";
+import inspectorStyles from "@dbsof/inspector/inspector.module.scss";
 
 import {DatabaseTabSpec} from "../../components/databasePage";
 import {ExplainType, ExplainVis} from "../../components/explainVis";
@@ -64,15 +64,15 @@ import {useDBRouter} from "../../hooks/dbRoute";
 
 import styles from "./repl.module.scss";
 import {isEndOfStatement, replPrompt} from "./state/utils";
-import {useIsMobile} from "@edgedb/common/hooks/useMobile";
-import {RunButton} from "@edgedb/common/ui/mobile";
-import {InspectorState} from "@edgedb/inspector/state";
-import {InspectorContext} from "@edgedb/inspector/context";
+import {useIsMobile} from "@dbsof/common/hooks/useMobile";
+import {RunButton} from "@dbsof/common/ui/mobile";
+import {InspectorState} from "@dbsof/inspector/state";
+import {InspectorContext} from "@dbsof/inspector/context";
 import {outputModeToggle, QueryError} from "../queryEditor";
 import {
   ResultGrid,
   ResultGridState,
-} from "@edgedb/common/components/resultGrid";
+} from "@dbsof/common/components/resultGrid";
 
 const ReplView = observer(function ReplView() {
   const replState = useTabState(Repl);

@@ -1,4 +1,4 @@
-import {reserved_keywords} from "@edgedb/lang-edgeql/meta";
+import {reserved_keywords} from "@dbsof/lang-edgeql/meta";
 
 import {
   RawAbstractAnnotation,

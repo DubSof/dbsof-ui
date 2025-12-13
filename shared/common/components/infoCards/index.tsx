@@ -1,17 +1,19 @@
 import {Fragment, PropsWithChildren} from "react";
 
-import cn from "@edgedb/common/utils/classNames";
+import cn from "@dbsof/common/utils/classNames";
 import {
   DocsIcon,
   ExternalLinkIcon,
   NewUpdatesIcon,
   UpgradeIcon,
-} from "@edgedb/common/newui";
+} from "@dbsof/common/newui";
 
-import {HorizontalCardList} from "@edgedb/common/newui/horizontalCardList";
+import {HorizontalCardList} from "@dbsof/common/newui/horizontalCardList";
 
 import styles from "./infoCards.module.scss";
 import {LatestInfo, useLatestInfo} from "./getLatestInfo";
+
+const productName = (import.meta as any).env?.VITE_PRODUCT_NAME || "Studio";
 
 export interface InfoCardDef {
   priority: number;
@@ -33,15 +35,15 @@ export function InfoCards({
 
   const cards: (InfoCardDef | null)[] = [
     {
-      priority: 0,
-      card: (
-        <InfoCard
-          title="Learn Gel"
+          priority: 0,
+          card: (
+            <InfoCard
+          title={`Learn ${productName}`}
           icon={<DocsIcon />}
           link="https://docs.geldata.com"
         >
-          Check out our docs for to learn everything you need to know about
-          Gel, from helpful guides to full API reference docs.
+          Check out the docs to learn everything you need to know about
+          {` ${productName},`} from helpful guides to full API reference docs.
         </InfoCard>
       ),
     },
@@ -56,7 +58,7 @@ export function InfoCards({
           priority: 1,
           card: (
             <InfoCard
-              title="What's New in Gel"
+              title={`What's New in ${productName}`}
               icon={<NewUpdatesIcon />}
               link={data.latestUpdate.url}
             >
@@ -75,11 +77,12 @@ export function InfoCards({
           priority: 3,
           card: (
             <InfoCard
-              title={`Gel ${data.latestEdgeDBVersion.major}.${data.latestEdgeDBVersion.minor} is available`}
+              title={`${productName} ${data.latestEdgeDBVersion.major}.${data.latestEdgeDBVersion.minor} is available`}
               icon={<UpgradeIcon />}
               link={`https://www.geldata.com/p/changelog/${data.latestEdgeDBVersion.major}_x`}
             >
-              This instance is ready to update to the latest version of Gel.{" "}
+              This instance is ready to update to the latest version of
+              {` ${productName}`} {" "}
               <u>Find out what's new in the changelog.</u>
             </InfoCard>
           ),

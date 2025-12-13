@@ -21,7 +21,7 @@ import {
   ErrorDetails,
   extractErrorDetails,
 } from "../../../utils/extractErrorDetails";
-import {createInspector, InspectorState, Item} from "@edgedb/inspector/state";
+import {createInspector, InspectorState, Item} from "@dbsof/inspector/state";
 import {baseOptions, decode, EdgeDBSet} from "../../../utils/decodeRawBuffer";
 import {CommandResult, handleSlashCommand} from "./commands";
 import {
@@ -46,11 +46,11 @@ import {NavigateFunction} from "../../../hooks/dbRoute";
 import {
   createResultGridState,
   ResultGridState,
-} from "@edgedb/common/components/resultGrid";
-import LRU from "gel/dist/primitives/lru";
+} from "@dbsof/common/components/resultGrid";
+import LRU from "@dbsof/platform/gel";
 import {Completer} from "../../../utils/completer";
 import {OutputMode} from "../../queryEditor/state";
-import {Language} from "gel/dist/ifaces";
+import {Language} from "@dbsof/platform/gel";
 
 export const defaultItemHeight = 85;
 

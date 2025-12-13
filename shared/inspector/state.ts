@@ -12,9 +12,9 @@ import {
   idProp,
 } from "mobx-keystone";
 import {action, computed, observable} from "mobx";
-import {_ICodec} from "gel";
+import {_ICodec} from "@dbsof/platform/gel";
 
-import {prettyPrintJSON} from "@edgedb/common/utils/renderJsonResult";
+import {prettyPrintJSON} from "@dbsof/common/utils/renderJsonResult";
 
 import {Item, buildItem, expandItem, ItemType} from "./buildItem";
 

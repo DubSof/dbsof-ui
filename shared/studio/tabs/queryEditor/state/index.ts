@@ -21,7 +21,7 @@ import {
 
 import {Text} from "@codemirror/state";
 
-import {createInspector, InspectorState, Item} from "@edgedb/inspector/state";
+import {createInspector, InspectorState, Item} from "@dbsof/inspector/state";
 
 import {
   storeQueryHistoryItem,
@@ -43,7 +43,7 @@ import {instanceCtx} from "../../../state/instance";
 import {
   SplitViewDirection,
   SplitViewState,
-} from "@edgedb/common/ui/splitView/model";
+} from "@dbsof/common/ui/splitView/model";
 import {
   paramsQueryCtx,
   QueryParamsEditor,
@@ -58,12 +58,12 @@ import {
   createExplainState,
   ExplainState,
 } from "../../../components/explainVis/state";
-import {Language, ProtocolVersion} from "gel/dist/ifaces";
+import {Language, ProtocolVersion} from "@dbsof/platform/gel";
 import {
   createResultGridState,
   ResultGridState,
-} from "@edgedb/common/components/resultGrid";
-import LRU from "gel/dist/primitives/lru";
+} from "@dbsof/common/components/resultGrid";
+import LRU from "@dbsof/platform/gel";
 
 export enum EditorKind {
   EdgeQL,

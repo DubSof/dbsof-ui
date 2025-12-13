@@ -18,8 +18,8 @@ import {NavigateFunction} from "../../../hooks/dbRoute";
 
 import {Text} from "@codemirror/state";
 
-import {CardinalityViolationError, _ICodec} from "gel";
-import {ObjectCodec} from "gel/dist/codecs/object";
+import {CardinalityViolationError, _ICodec} from "@dbsof/platform/gel";
+import {ObjectCodec} from "@dbsof/platform/gel";
 
 import {EdgeDBSet} from "../../../utils/decodeRawBuffer";
 
@@ -29,22 +29,22 @@ import {
   SchemaLink,
   SchemaProperty,
   SchemaType,
-} from "@edgedb/common/schemaData";
-import {resolveObjectTypeUnion} from "@edgedb/common/schemaData/utils";
+} from "@dbsof/common/schemaData";
+import {resolveObjectTypeUnion} from "@dbsof/common/schemaData/utils";
 
-import {InspectorState, resultGetterCtx} from "@edgedb/inspector/state";
+import {InspectorState, resultGetterCtx} from "@dbsof/inspector/state";
 
 import {dbCtx, connCtx} from "../../../state";
 import {DataEditingManager, UpdateLinkChangeKind} from "./edits";
 import {sessionStateCtx} from "../../../state/sessionState";
 import {sortObjectTypes} from "../../../components/objectTypeSelect";
 
-import {DataGridState} from "@edgedb/common/components/dataGrid/state";
+import {DataGridState} from "@dbsof/common/components/dataGrid/state";
 import {deserialiseFieldConfig, serialiseFieldConfig} from "../fieldConfig";
 import {
   storeLocalStorageCacheItem,
   getLocalStorageCacheItem,
-} from "@edgedb/common/utils/localStorageCache";
+} from "@dbsof/common/utils/localStorageCache";
 
 const fetchBlockSize = 100;
 

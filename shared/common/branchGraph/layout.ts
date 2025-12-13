@@ -1,7 +1,7 @@
 import * as z from "zod";
-import {AuthenticationError} from "gel";
+import {AuthenticationError} from "@dbsof/platform/gel";
 
-import {InstanceState} from "@edgedb/studio/state/instance";
+import {InstanceState} from "@dbsof/studio/state/instance";
 import {
   getLocalStorageCacheItem,
   storeLocalStorageCacheItem,

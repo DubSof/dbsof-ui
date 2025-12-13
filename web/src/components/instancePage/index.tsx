@@ -1,13 +1,13 @@
 import {observer} from "mobx-react-lite";
 import {Link} from "react-router-dom";
 
-import {BranchGraph} from "@edgedb/common/branchGraph";
-import {InfoCards} from "@edgedb/common/components/infoCards";
+import {BranchGraph} from "@dbsof/common/branchGraph";
+import {InfoCards} from "@dbsof/common/components/infoCards";
 
-// import {useModal} from "@edgedb/common/hooks/useModal";
-// import Button from "@edgedb/common/ui/button";
-// import CreateBranchModal from "@edgedb/studio/components/modals/createBranch";
-// import {fetchExampleSchema} from "@edgedb/studio/tabs/dashboard";
+// import {useModal} from "@dbsof/common/hooks/useModal";
+// import Button from "@dbsof/common/ui/button";
+// import CreateBranchModal from "@dbsof/studio/components/modals/createBranch";
+// import {fetchExampleSchema} from "@dbsof/studio/tabs/dashboard";
 
 import {useAppState} from "../../state/providers";
 

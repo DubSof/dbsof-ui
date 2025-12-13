@@ -1,8 +1,8 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 
-import {getHTTPSCRAMAuth} from "gel/dist/httpScram";
-import {cryptoUtils} from "gel/dist/browserCrypto";
+import {getHTTPSCRAMAuth} from "@dbsof/platform/gel";
+import {cryptoUtils} from "@dbsof/platform/gel";
 
 import {
   ModalPanel,
@@ -11,7 +11,7 @@ import {
   TextInput,
   SubmitButton,
   InfoIcon,
-} from "@edgedb/common/newui";
+} from "@dbsof/common/newui";
 
 import {serverUrl, setAuthToken} from "../../state/models/app";
 import {Logo} from "../header";

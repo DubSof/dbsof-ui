@@ -1,5 +1,5 @@
-import {_CodecsRegistry, _ReadBuffer, _ICodec, Options} from "gel";
-import type {ProtocolVersion} from "gel/dist/ifaces";
+import {_CodecsRegistry, _ReadBuffer, _ICodec, Options} from "@dbsof/platform/gel";
+import type {ProtocolVersion} from "@dbsof/platform/gel";
 
 export type EdgeDBSet = Array<any> & {_codec: _ICodec};
 

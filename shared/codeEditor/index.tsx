@@ -49,13 +49,13 @@ import {
 import {indentationMarkers} from "@replit/codemirror-indentation-markers";
 import {lintKeymap} from "@codemirror/lint";
 
-import {edgeql, edgeqlLanguage} from "@edgedb/lang-edgeql";
+import {edgeql, edgeqlLanguage} from "@dbsof/lang-edgeql";
 import {highlightStyle, darkTheme, lightTheme} from "./theme";
 import {getCompletions} from "./completions";
 
-import cn from "@edgedb/common/utils/classNames";
+import cn from "@dbsof/common/utils/classNames";
 
-import {SchemaObjectType} from "@edgedb/common/schemaData";
+import {SchemaObjectType} from "@dbsof/common/schemaData";
 
 import styles from "./codeEditor.module.scss";
 import {cursorPlugin} from "./terminalCursor";

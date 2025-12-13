@@ -18,7 +18,7 @@ import {
 import {connCtx, dbCtx} from "../../../state";
 import {Text} from "@codemirror/state";
 import {ChatParticipantRole, RAGRequest, SSEStream, runRAGQuery} from "./rag";
-import {SchemaObjectType} from "@edgedb/common/schemaData";
+import {SchemaObjectType} from "@dbsof/common/schemaData";
 import {
   storeAIPlaygroundChatItem,
   fetchAIPlaygroundChatHistory,

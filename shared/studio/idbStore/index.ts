@@ -1,5 +1,5 @@
 import {openDB, DBSchema, IDBPDatabase} from "idb";
-import {ProtocolVersion} from "gel/dist/ifaces";
+import {ProtocolVersion} from "@dbsof/platform/gel";
 import {StoredSchemaData} from "../state/database";
 import {StoredSessionStateData} from "../state/sessionState";
 import {rewriteTypedesc} from "../utils/rewriteTypedesc";

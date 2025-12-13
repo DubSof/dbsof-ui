@@ -3,7 +3,7 @@ import {z} from "zod";
 
 const latestInfoUrl =
   (import.meta as any).env?.VITE_LATEST_INFO_URL ||
-  "https://www.geldata.com/latestInfo.json";
+  "/latestInfo.json";
 
 const latestInfoType = z.object({
   latestBlogPost: z.object({

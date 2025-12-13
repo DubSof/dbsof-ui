@@ -1,0 +1,9 @@
+{
+  "name": "@dbsof/platform",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.ts",
+  "dependencies": {
+    "gel": "^2.0.2"
+  }
+}
