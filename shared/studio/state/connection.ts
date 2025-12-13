@@ -1,39 +1,16 @@
 import {action, computed, makeObservable} from "mobx";
-import {createContext, _async, _await} from "mobx-keystone";
+import {createContext} from "mobx-keystone";
 
 import {
-  AuthenticationError,
+  Capabilities,
   ClientError,
-  SHOULD_RETRY,
-  TransactionConflictError,
-} from "@dbsof/platform/client";
-import {Options} from "@dbsof/platform/client";
-import LRU from "@dbsof/platform/client";
-import {Capabilities} from "@dbsof/platform/client";
-import {AdminUIFetchConnection} from "@dbsof/platform/client";
-
-import {
-  Cardinality,
   Language,
-  OutputFormat,
   ProtocolVersion,
-  QueryOptions,
+  QueryArgs,
 } from "@dbsof/platform/client";
-import {ICodec} from "@dbsof/platform/client";
-import {sleep} from "@dbsof/platform/client";
-
-import {
-  decode,
-  ResultSet,
-  QueryParams,
-  codecsRegistry,
-  baseOptions,
-} from "../utils/decodeRawBuffer";
-import {SessionState} from "./sessionState";
-import {splitQueryIntoStatements} from "../utils/syntaxTree";
 
 export {Capabilities};
-export type {QueryParams};
+export type QueryParams = QueryArgs;
 
 export interface QueryDuration {
   prepare: number;
@@ -49,7 +26,7 @@ export interface ConnectConfig {
 }
 
 interface QueryResult {
-  result: ResultSet | null;
+  result: null;
   duration: QueryDuration;
   outCodecBuf: Uint8Array;
   resultBuf: Uint8Array;
@@ -60,14 +37,12 @@ interface QueryResult {
 }
 
 interface ParseResult {
-  inCodec: ICodec;
+  inCodec: null;
   outCodecBuf: Uint8Array;
   protoVer: ProtocolVersion;
   duration: number;
   warnings: Error[];
 }
-
-type QueryKind = "query" | "parse" | "execute";
 
 type QueryOpts = {
   newCodec?: boolean;
@@ -97,12 +72,6 @@ type PendingQuery = {
   | {kind: "execute"; resolve: (result: void) => void}
 );
 
-const queryOptions: QueryOptions = {
-  injectTypenames: true,
-  injectTypeids: true,
-  injectObjectids: true,
-};
-
 export interface Role {
   name: string;
   is_superuser: boolean;
@@ -116,102 +85,11 @@ export interface AuthProvider {
   invalidateToken(): void;
 }
 
-export function createAuthenticatedFetch({
-  serverUrl,
-  database,
-  authProvider,
-}: ConnectConfig) {
-  const databaseUrl = `${serverUrl}/db/${encodeURIComponent(database)}/`;
-
-  return (path: RequestInfo | URL, init?: RequestInit) => {
-    const url = new URL(
-      path instanceof Request ? path.url : path,
-      databaseUrl
-    );
-
-    const headers = new Headers(init?.headers);
-    const user = authProvider.getAuthUser?.();
-    if (user) {
-      headers.append("X-Studio-User", user);
-    }
-    headers.append("Authorization", `Bearer ${authProvider.getAuthToken()}`);
-
-    return fetch(url, {
-      ...init,
-      headers,
-    });
-  };
-}
-
-function initConnPool(
-  config: ConnectConfig,
-  serverVersion: {major: number; minor: number} | null,
-  size = 3
-): AdminUIFetchConnection[] {
-  const authedFetch = createAuthenticatedFetch(config);
-
-  return Array(size)
-    .fill(null)
-    .map(() =>
-      AdminUIFetchConnection.create(
-        authedFetch,
-        codecsRegistry,
-        serverVersion ? [serverVersion.major, serverVersion.minor] : undefined
-      )
-    );
-}
-
-function setQueryTag(options: Options, tag: string) {
-  const annos = new Map((options as any).annotations as Map<string, string>);
-  annos.set("tag", tag);
-  const clone = (options as any)._cloneWith({});
-  clone.annotations = annos;
-  return clone as Options;
-}
-
 export class Connection {
-  private readonly _connPool: AdminUIFetchConnection[];
-
-  private _runningBlockingQuery = false;
-
-  private readonly _codecCache = new LRU<
-    string,
-    [any, any, Uint8Array, number, Error[]]
-  >({
-    capacity: 200,
-  });
   private readonly _queryQueue: PendingQuery[] = [];
 
-  constructor(
-    public readonly config: ConnectConfig,
-    private readonly serverVersion: {major: number; minor: number} | null,
-    private readonly sessionState: SessionState | null
-  ) {
+  constructor(public readonly config: ConnectConfig) {
     makeObservable(this);
-    this._connPool = initConnPool(config, serverVersion);
-  }
-
-  @computed
-  get _state() {
-    let state = baseOptions;
-
-    if (this.sessionState?.activeState.globals.length) {
-      state = state.withGlobals(
-        this.sessionState.activeState.globals.reduce((globals, global) => {
-          globals[global.name] = global.value;
-          return globals;
-        }, {} as {[key: string]: any})
-      );
-    }
-    if (this.sessionState?.activeState.config.length) {
-      state = state.withConfig(
-        this.sessionState.activeState.config.reduce((configs, config) => {
-          configs[config.name] = config.value;
-          return configs;
-        }, {} as {[key: string]: any})
-      );
-    }
-    return setQueryTag(state, "studio/ui");
   }
 
   hasRolePermissions(...perms: string[]): boolean {
@@ -225,12 +103,7 @@ export class Connection {
 
   @computed
   get sessionConfig() {
-    return (
-      this.sessionState?.activeState.config.reduce((configs, config) => {
-        configs[config.name] = config.value;
-        return configs;
-      }, {} as {[key: string]: any}) ?? {}
-    );
+    return {} as Record<string, any>;
   }
 
   query(
@@ -264,15 +137,12 @@ export class Connection {
     );
   }
 
-  execute(
-    script: string,
-    language: Language = Language.NativeQL
-  ): Promise<void> {
-    return this._addQueryToQueue("execute", language, script);
+  execute(script: string, language: Language = Language.NativeQL): Promise<void> {
+    return this._addQueryToQueue("execute", language, script) as Promise<void>;
   }
 
   _addQueryToQueue(
-    kind: QueryKind,
+    kind: PendingQuery["kind"],
     language: Language,
     query: string,
     params?: QueryParams,
@@ -287,11 +157,10 @@ export class Connection {
         params,
         opts,
         abortSignal,
-        resolve,
+        resolve: resolve as any,
         reject,
       };
       this._queryQueue.push(pendingQuery);
-
       abortSignal?.addEventListener("abort", () => {
         const queueIndex = this._queryQueue.indexOf(pendingQuery);
         if (queueIndex !== -1) {
@@ -299,274 +168,75 @@ export class Connection {
           reject(new DOMException("The operation was aborted.", "AbortError"));
         }
       });
-
       this._processQueryQueue();
     });
   }
 
   @action
   async _processQueryQueue() {
-    if (this._runningBlockingQuery) return;
-
-    if (this._queryQueue.length && this._connPool.length) {
+    while (this._queryQueue.length) {
       const query = this._queryQueue.shift()!;
-      this._runningBlockingQuery = query.opts.blocking ?? false;
-      const conn = this._connPool.pop()!;
       try {
-        const result = await this._retryingQuery(conn, query);
+        const result = await this._handleQuery(query);
         query.resolve(result as any);
       } catch (e: any) {
         query.reject(e);
       }
-      this._connPool.push(conn);
-      this._runningBlockingQuery = false;
-      this._processQueryQueue();
     }
   }
 
-  private checkAborted(abortSignal: AbortSignal | null) {
+  private async _handleQuery(query: PendingQuery) {
+    const {kind, abortSignal} = query;
+    if (abortSignal?.aborted) {
+      throw new DOMException("The operation was aborted.", "AbortError");
+    }
+
+    const emptyBuffers = new Uint8Array();
+    const duration: QueryDuration = {prepare: 0, execute: 0};
+
+    if (kind === "execute") {
+      return;
+    }
+
+    if (kind === "parse") {
+      const parseResult: ParseResult = {
+        inCodec: null,
+        outCodecBuf: emptyBuffers,
+        protoVer: [0, 0],
+        duration: 0,
+        warnings: [],
+      };
+      return parseResult;
+    }
+
+    const queryResult: QueryResult = {
+      result: null,
+      duration,
+      outCodecBuf: emptyBuffers,
+      resultBuf: emptyBuffers,
+      protoVer: [0, 0],
+      capabilities: Capabilities.NONE,
+      status: "OK",
+      warnings: [],
+    };
+
+    return queryResult;
+  }
+
+  checkAborted(abortSignal: AbortSignal | null) {
     if (abortSignal?.aborted) {
       throw new DOMException("The operation was aborted.", "AbortError");
     }
   }
 
-  async _retryingQuery(conn: AdminUIFetchConnection, query: PendingQuery) {
-    let iter = 1;
-    while (true) {
-      const result = await this._query(
-        conn,
-        query.kind,
-        query.language,
-        query.query,
-        query.opts,
-        query.params,
-        query.abortSignal
-      );
-      if (result && "error" in result) {
-        const {error, capabilities} = result;
-        if (error instanceof AuthenticationError) {
-          if (
-            !error.message.includes(
-              "user does not have permission for database branch"
-            )
-          ) {
-            this.config.authProvider.invalidateToken();
-          }
-          throw error;
-        }
-        if (
-          ((error instanceof ClientError && (error as any).hasTag?.(SHOULD_RETRY)) ||
-            error instanceof TypeError) &&
-          (capabilities === 0 || error instanceof TransactionConflictError)
-        ) {
-          if (iter >= baseOptions.retryOptions.default.attempts) {
-            throw error;
-          }
-          await sleep(baseOptions.retryOptions.default.backoff(iter));
-          iter += 1;
-          continue;
-        }
-        throw error;
-      }
-      return result;
-    }
-  }
-
-  async _query(
-    conn: AdminUIFetchConnection,
-    kind: QueryKind,
-    language: Language,
-    queryString: string,
-    opts: QueryOpts,
-    params: QueryParams | undefined,
-    abortSignal: AbortSignal | null
-  ): Promise<
-    QueryResult | ParseResult | void | {error: unknown; capabilities: number}
-  > {
-    let capabilities: number = 0;
+  async retryQuery<T>(fn: () => Promise<T>) {
     try {
-      this.checkAborted(abortSignal);
-
-      let state = this._state;
-
-      if (opts.ignoreSessionConfig) {
-        state = baseOptions.withGlobals(state.globals);
-        if (
-          this.hasRolePermissions("cfg::perm::configure_apply_access_policies")
-        ) {
-          state = state.withConfig({apply_access_policies: false});
-        }
-        state = setQueryTag(state, "studio/ui");
+      return await fn();
+    } catch (err: any) {
+      if (err instanceof ClientError && (err as any).tag === "retry") {
+        return await fn();
       }
-      if (opts.userQuery) {
-        state = setQueryTag(state, "studio/webrepl");
-      } else {
-        state = state.withConfig({force_database_error: "false"});
-      }
-
-      if (kind === "execute") {
-        await conn.rawExecute(
-          language,
-          queryString,
-          state,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          abortSignal
-        );
-        return;
-      }
-
-      const statements = splitQueryIntoStatements(queryString);
-      const lastStatement = statements[statements.length - 1];
-      const isExplain = lastStatement && /^\s*analyze/i.test(lastStatement);
-
-      if (isExplain) {
-        console.log(
-          "explain query; disabling typename injection + implicit limits"
-        );
-      }
-
-      const startTime = performance.now();
-
-      let inCodec: ICodec,
-        outCodec: ICodec,
-        outCodecBuf: Uint8Array | null,
-        warnings: Error[],
-        // @ts-ignore - Ignore _ is declared but not used error
-        _;
-
-      if (kind !== "parse" && this._codecCache.has(queryString)) {
-        [inCodec, outCodec, outCodecBuf, capabilities, warnings] =
-          this._codecCache.get(queryString)!;
-      } else {
-        [_, _, inCodec, outCodec, capabilities, _, outCodecBuf, warnings] =
-          await conn.rawParse(
-            language,
-            queryString,
-            state,
-            isExplain ? {} : queryOptions,
-            abortSignal
-          );
-        this._codecCache.set(queryString, [
-          inCodec,
-          outCodec,
-          outCodecBuf!,
-          capabilities,
-          warnings,
-        ]);
-      }
-
-      const parseEndTime = performance.now();
-
-      if (kind === "parse") {
-        return {
-          inCodec,
-          outCodecBuf: outCodecBuf!,
-          protoVer: conn.protocolVersion,
-          duration: Math.round(parseEndTime - startTime),
-          warnings,
-        };
-      }
-
-      this.checkAborted(abortSignal);
-
-      const serverVersion = this.serverVersion;
-      if (
-        (!serverVersion || serverVersion.major >= 6) &&
-        !(
-          capabilities &
-          (Capabilities.MODIFICATONS |
-            Capabilities.DDL |
-            Capabilities.PERSISTENT_CONFIG)
-        ) &&
-        (!opts.userQuery || !state.config.has("default_transaction_isolation"))
-      ) {
-        state = state.withConfig({
-          default_transaction_isolation: "RepeatableRead",
-        });
-      }
-
-      const [resultBuf] = await conn.rawExecute(
-        language,
-        queryString,
-        state,
-        outCodec,
-        isExplain ? {} : {...queryOptions, implicitLimit: opts.implicitLimit},
-        inCodec,
-        params,
-        abortSignal
-      );
-
-      if (resultBuf.length > 2 ** 28) {
-        throw new ClientError("Result is too large to display");
-      }
-
-      const newOutCodec = (
-        (conn as any).queryCodecCache as LRU<
-          string,
-          [number, ICodec, ICodec, number]
-        >
-      ).get(
-        (conn as any)._getQueryCacheKey(
-          queryString,
-          OutputFormat.BINARY,
-          Cardinality.MANY
-        )
-      )?.[2];
-      if (newOutCodec && newOutCodec?.tid !== outCodec.tid) {
-        this.checkAborted(abortSignal);
-        [_, _, inCodec, outCodec, capabilities, _, outCodecBuf, warnings] =
-          await conn.rawParse(
-            language,
-            queryString,
-            state,
-            isExplain ? {} : queryOptions,
-            abortSignal
-          );
-        this._codecCache.set(queryString, [
-          inCodec,
-          outCodec,
-          outCodecBuf!,
-          capabilities,
-          warnings,
-        ]);
-      }
-
-      this.checkAborted(abortSignal);
-
-      const executeEndTime = performance.now();
-
-      const duration = {
-        prepare: Math.round(parseEndTime - startTime),
-        execute: Math.round(executeEndTime - parseEndTime),
-      };
-
-      return {
-        result: decode(
-          outCodecBuf!,
-          resultBuf,
-          state,
-          conn.protocolVersion,
-          opts.newCodec
-        ),
-        duration,
-        outCodecBuf: outCodecBuf!,
-        resultBuf,
-        protoVer: conn.protocolVersion,
-        capabilities,
-        status: (conn as any).lastStatus,
-        warnings,
-      };
-    } catch (err) {
-      return {
-        error:
-          err instanceof DOMException && err.name === "AbortError"
-            ? new DOMException("Query was canceled by user.", "AbortError")
-            : err,
-        capabilities,
-      };
+      throw err;
     }
   }
 }

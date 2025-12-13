@@ -210,7 +210,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@dbsof/platform@workspace:shared/platform"
   dependencies:
-    gel: ^2.0.2
   languageName: unknown
   linkType: soft
 
@@ -2778,21 +2777,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gel@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "gel@npm:2.0.2"
-  dependencies:
-    "@petamoriken/float16": ^3.8.7
-    debug: ^4.3.4
-    env-paths: ^3.0.0
-    semver: ^7.6.2
-    shell-quote: ^1.8.1
-    which: ^4.0.0
-  bin:
-    gel: dist/cli.mjs
-  checksum: cbd7dd4e90ec12b17fb7ef1b5eb81170d4e87a7f523528206ef1dfdcddd2d45943e2e58809cab209c1422c6e2ee761cccf2f7bd974d26cb839baea105fa63219
-  languageName: node
-  linkType: hard
 
 "generic-names@npm:^4.0.0":
   version: 4.0.0
@@ -5368,7 +5352,6 @@ __metadata:
     eslint: ^9.13.0
     eslint-plugin-react-hooks: ^5.0.0
     eslint-plugin-react-refresh: ^0.4.14
-    gel: ^2.0.2
     generic-names: ^4.0.0
     globals: ^15.11.0
     mobx: ^6.5.0
