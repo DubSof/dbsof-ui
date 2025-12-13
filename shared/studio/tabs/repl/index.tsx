@@ -1054,7 +1054,7 @@ const ReplHeader = observer(function ReplHeader() {
         dangerouslySetInnerHTML={{__html: headerASCII}}
       />
       <div className={styles.headerMsg}>
-        Welcome to Gel repl, type{" "}
+        Welcome to Studio repl, type{" "}
         <span onClick={() => replState.runQuery("\\help")}>\help</span> for
         commands list
         <br />

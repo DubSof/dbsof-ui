@@ -66,7 +66,7 @@ import {
 import LRU from "@dbsof/platform/client";
 
 export enum EditorKind {
-  EdgeQL,
+  NativeQL,
   VisualBuilder,
   SQL,
 }
@@ -78,7 +78,7 @@ export enum OutputMode {
 
 type HistoryItemQueryData =
   | {
-      kind: EditorKind.EdgeQL | EditorKind.SQL;
+      kind: EditorKind.NativeQL | EditorKind.SQL;
       query: string;
       params: SerializedParamsData | null;
     }
@@ -161,7 +161,7 @@ export class QueryHistoryErrorItem extends ExtendedModel(QueryHistoryItem, {
 }) {}
 
 type QueryData = {
-  [EditorKind.EdgeQL]: Text;
+  [EditorKind.NativeQL]: Text;
   [EditorKind.SQL]: Text;
   [EditorKind.VisualBuilder]: QueryBuilderState;
 };
@@ -171,11 +171,11 @@ export const queryEditorCtx = createMobxContext<QueryEditor>();
 @model("QueryEditor")
 export class QueryEditor extends Model({
   _queryParamsEditor: prop(
-    () => new QueryParamsEditor({lang: Language.EDGEQL})
+    () => new QueryParamsEditor({lang: Language.NativeQL})
   ),
   _sqlParamsEditor: prop(() => new QueryParamsEditor({lang: Language.SQL})),
 
-  selectedEditor: prop<EditorKind>(EditorKind.EdgeQL),
+  selectedEditor: prop<EditorKind>(EditorKind.NativeQL),
 
   showHistory: prop(false),
   queryHistory: prop<QueryHistoryItem[]>(() => [null as any]),
@@ -204,14 +204,14 @@ export class QueryEditor extends Model({
 
   @observable.shallow
   currentQueryData: QueryData = {
-    [EditorKind.EdgeQL]: Text.empty,
+    [EditorKind.NativeQL]: Text.empty,
     [EditorKind.SQL]: Text.empty,
     [EditorKind.VisualBuilder]: new QueryBuilderState({}),
   };
 
   @observable
   queryIsEdited: {[key in EditorKind]: boolean} = {
-    [EditorKind.EdgeQL]: false,
+    [EditorKind.NativeQL]: false,
     [EditorKind.SQL]: false,
     [EditorKind.VisualBuilder]: false,
   };
@@ -222,7 +222,7 @@ export class QueryEditor extends Model({
   }
 
   _splitViews: {[key in EditorKind]: SplitViewState} = {
-    [EditorKind.EdgeQL]: new SplitViewState({}),
+    [EditorKind.NativeQL]: new SplitViewState({}),
     [EditorKind.SQL]: new SplitViewState({
       direction: SplitViewDirection.vertical,
     }),
@@ -236,7 +236,7 @@ export class QueryEditor extends Model({
 
   @computed
   get paramsEditor() {
-    return this.selectedEditor === EditorKind.EdgeQL
+    return this.selectedEditor === EditorKind.NativeQL
       ? this._queryParamsEditor
       : this.selectedEditor === EditorKind.SQL
       ? this._sqlParamsEditor
@@ -247,7 +247,7 @@ export class QueryEditor extends Model({
   currentResults: {
     [key in EditorKind]: QueryHistoryItem | null;
   } = {
-    [EditorKind.EdgeQL]: null,
+    [EditorKind.NativeQL]: null,
     [EditorKind.SQL]: null,
     [EditorKind.VisualBuilder]: null,
   };
@@ -259,12 +259,12 @@ export class QueryEditor extends Model({
 
   @computed
   get showEditorResultDecorations() {
-    return !this.queryIsEdited[EditorKind.EdgeQL];
+    return !this.queryIsEdited[EditorKind.NativeQL];
   }
 
   @observable
   _outputMode: {[key in EditorKind]: OutputMode} = {
-    [EditorKind.EdgeQL]: OutputMode.Tree,
+    [EditorKind.NativeQL]: OutputMode.Tree,
     [EditorKind.SQL]: OutputMode.Grid,
     [EditorKind.VisualBuilder]: OutputMode.Tree,
   };
@@ -288,8 +288,8 @@ export class QueryEditor extends Model({
   }
 
   @action
-  setEdgeQLString(query: string) {
-    this.currentQueryData[EditorKind.EdgeQL] = Text.of(query.split("\n"));
+  setNativeQLString(query: string) {
+    this.currentQueryData[EditorKind.NativeQL] = Text.of(query.split("\n"));
   }
 
   @computed
@@ -318,7 +318,7 @@ export class QueryEditor extends Model({
     return (
       !this.queryRunning &&
       !this.showHistory &&
-      (this.selectedEditor === EditorKind.EdgeQL ||
+      (this.selectedEditor === EditorKind.NativeQL ||
       this.selectedEditor === EditorKind.SQL
         ? !this.paramsEditor!.hasErrors &&
           !!this.currentQueryText?.toString().trim()
@@ -331,7 +331,7 @@ export class QueryEditor extends Model({
 
     paramsQueryCtx.setComputed(
       this._queryParamsEditor,
-      () => this.currentQueryData[EditorKind.EdgeQL]
+      () => this.currentQueryData[EditorKind.NativeQL]
     );
     paramsQueryCtx.setComputed(
       this._sqlParamsEditor,
@@ -437,7 +437,7 @@ export class QueryEditor extends Model({
 
   draftQueryData: {
     selectedEditor: EditorKind;
-    [EditorKind.EdgeQL]: {
+    [EditorKind.NativeQL]: {
       query: Text;
       params: Frozen<SerializedParamsData | null>;
       isEdited: boolean;
@@ -461,11 +461,11 @@ export class QueryEditor extends Model({
     const current = this.currentQueryData;
     this.draftQueryData = {
       selectedEditor: this.selectedEditor,
-      [EditorKind.EdgeQL]: {
-        query: current[EditorKind.EdgeQL],
+      [EditorKind.NativeQL]: {
+        query: current[EditorKind.NativeQL],
         params: frozen(this._queryParamsEditor.serializeParamsData()),
-        isEdited: this.queryIsEdited[EditorKind.EdgeQL],
-        result: this.currentResults[EditorKind.EdgeQL],
+        isEdited: this.queryIsEdited[EditorKind.NativeQL],
+        result: this.currentResults[EditorKind.NativeQL],
       },
       [EditorKind.SQL]: {
         query: current[EditorKind.SQL],
@@ -487,13 +487,13 @@ export class QueryEditor extends Model({
     const draft = this.draftQueryData;
     if (draft) {
       this.currentQueryData = {
-        [EditorKind.EdgeQL]: draft[EditorKind.EdgeQL].query,
+        [EditorKind.NativeQL]: draft[EditorKind.NativeQL].query,
         [EditorKind.SQL]: draft[EditorKind.SQL].query,
         [EditorKind.VisualBuilder]: draft[EditorKind.VisualBuilder].state,
       };
 
       this._queryParamsEditor.restoreParamsData(
-        draft[EditorKind.EdgeQL].params?.data
+        draft[EditorKind.NativeQL].params?.data
       );
       this._sqlParamsEditor.restoreParamsData(
         draft[EditorKind.SQL].params?.data
@@ -501,12 +501,12 @@ export class QueryEditor extends Model({
 
       this.setSelectedEditor(draft.selectedEditor);
       this.currentResults = {
-        [EditorKind.EdgeQL]: draft[EditorKind.EdgeQL].result,
+        [EditorKind.NativeQL]: draft[EditorKind.NativeQL].result,
         [EditorKind.SQL]: draft[EditorKind.SQL].result,
         [EditorKind.VisualBuilder]: draft[EditorKind.VisualBuilder].result,
       };
       this.queryIsEdited = {
-        [EditorKind.EdgeQL]: draft[EditorKind.EdgeQL].isEdited,
+        [EditorKind.NativeQL]: draft[EditorKind.NativeQL].isEdited,
         [EditorKind.SQL]: draft[EditorKind.SQL].isEdited,
         [EditorKind.VisualBuilder]: draft[EditorKind.VisualBuilder].isEdited,
       };
@@ -515,7 +515,7 @@ export class QueryEditor extends Model({
 
   @action
   loadFromRepl(item: ReplHistoryItem) {
-    this.currentQueryData[EditorKind.EdgeQL] = Text.of(item.query.split("\n"));
+    this.currentQueryData[EditorKind.NativeQL] = Text.of(item.query.split("\n"));
 
     const historyItemData: ModelCreationData<QueryHistoryItem> = {
       $modelId: item.$modelId,
@@ -539,13 +539,13 @@ export class QueryEditor extends Model({
       implicitLimit: item.implicitLimit!,
     });
 
-    this.currentResults[EditorKind.EdgeQL] = historyItem;
+    this.currentResults[EditorKind.NativeQL] = historyItem;
 
     this.queryIsEdited = {
       ...this.queryIsEdited,
-      [EditorKind.EdgeQL]: false,
+      [EditorKind.NativeQL]: false,
     };
-    this.setSelectedEditor(EditorKind.EdgeQL);
+    this.setSelectedEditor(EditorKind.NativeQL);
   }
 
   @action
@@ -566,7 +566,7 @@ export class QueryEditor extends Model({
       const queryData = historyItem.queryData;
 
       switch (queryData.data.kind) {
-        case EditorKind.EdgeQL:
+        case EditorKind.NativeQL:
         case EditorKind.SQL:
           this.currentQueryData[queryData.data.kind] = Text.of(
             queryData.data.query.split("\n")
@@ -585,7 +585,7 @@ export class QueryEditor extends Model({
       this.currentResults[queryData.data.kind] = historyItem;
       this.setSelectedEditor(queryData.data.kind);
       this.queryIsEdited = {
-        [EditorKind.EdgeQL]: false,
+        [EditorKind.NativeQL]: false,
         [EditorKind.SQL]: false,
         [EditorKind.VisualBuilder]: false,
       };
@@ -717,14 +717,14 @@ export class QueryEditor extends Model({
     let queryData: HistoryItemQueryData;
 
     const query =
-      kind === EditorKind.EdgeQL || kind === EditorKind.SQL
+      kind === EditorKind.NativeQL || kind === EditorKind.SQL
         ? draftQuery[kind].query.toString().trim()
         : kind === EditorKind.VisualBuilder
         ? draftQuery[EditorKind.VisualBuilder].state.query
         : null;
 
     switch (kind) {
-      case EditorKind.EdgeQL:
+      case EditorKind.NativeQL:
       case EditorKind.SQL: {
         const paramsData = draftQuery[kind].params;
 
@@ -760,7 +760,7 @@ export class QueryEditor extends Model({
     const conn = connCtx.get(this)!;
 
     const queryData: HistoryItemQueryData =
-      this.selectedEditor === EditorKind.EdgeQL ||
+      this.selectedEditor === EditorKind.NativeQL ||
       this.selectedEditor === EditorKind.SQL
         ? {
             kind: this.selectedEditor,
@@ -781,7 +781,7 @@ export class QueryEditor extends Model({
       ?.value as bigint | undefined;
 
     const lang =
-      this.selectedEditor === EditorKind.SQL ? Language.SQL : Language.EDGEQL;
+      this.selectedEditor === EditorKind.SQL ? Language.SQL : Language.NativeQL;
     try {
       const {
         result,
@@ -794,7 +794,7 @@ export class QueryEditor extends Model({
       } = yield* _await(
         conn.query(
           query,
-          this.selectedEditor === EditorKind.EdgeQL ||
+          this.selectedEditor === EditorKind.NativeQL ||
             this.selectedEditor === EditorKind.SQL
             ? this.paramsEditor!.getQueryArgs()
             : undefined,
@@ -851,7 +851,7 @@ export class QueryEditor extends Model({
     const selectedEditor = this.selectedEditor;
 
     const query =
-      selectedEditor === EditorKind.EdgeQL || selectedEditor === EditorKind.SQL
+      selectedEditor === EditorKind.NativeQL || selectedEditor === EditorKind.SQL
         ? this.currentQueryText?.toString().trim()
         : selectedEditor === EditorKind.VisualBuilder
         ? this.currentQueryData[EditorKind.VisualBuilder].query

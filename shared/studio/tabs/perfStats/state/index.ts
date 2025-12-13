@@ -13,7 +13,7 @@ import {
 import {Language} from "@dbsof/platform/client";
 import {calculateHistogram} from "../utils";
 
-export type QueryType = "EdgeQL" | "SQL";
+export type QueryType = "NativeQL" | "SQL";
 
 export interface QueryStats {
   id: string;
@@ -68,7 +68,7 @@ function getTagGroup(tag: string | null): TagFilterGroup {
 
 @model("PerfStats")
 export class PerfStatsState extends Model({
-  paramsEditor: prop(() => new QueryParamsEditor({lang: Language.EDGEQL})),
+  paramsEditor: prop(() => new QueryParamsEditor({lang: Language.NativeQL})),
 }) {
   @observable.ref
   stats: QueryStats[] | null = null;

@@ -67,7 +67,7 @@ export const FunctionTypeRenderer = observer(function FunctionTypeRenderer({
           <span className={styles.builtinFunc}>builtin function</span>
           <Punc>{")"}</Punc>
         </>
-      ) : type.language === "EdgeQL" ? (
+      ) : type.language === "NativeQL" ? (
         <>
           <Punc>{"("}</Punc>
           <CodeBlock code={type.body ?? ""} inline />
@@ -166,7 +166,7 @@ export function functionToSDL(type: SchemaFunction) {
   const funcBody = `using ${
     type.language === "builtin"
       ? "(builtin function)"
-      : type.language === "EdgeQL"
+      : type.language === "NativeQL"
       ? `(${type.body})`
       : `${type.language} '${type.body}'`
   };`;

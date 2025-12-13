@@ -235,7 +235,7 @@ const EmailProviderCard = observer(function EmailProviderCard({
             <>
               <div className={styles.name}>Cloud SMTP</div>
               <div className={styles.cloudSmtpDesc}>
-                Auto configured SMTP provided by Gel Cloud for development use.
+                Auto configured SMTP provided by Studio Cloud for development use.
               </div>
               <div className={styles.cloudSmtpNote}>
                 Note: This provider is rate limited and the sender address is

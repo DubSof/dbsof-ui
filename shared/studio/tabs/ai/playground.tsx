@@ -88,7 +88,7 @@ export const PlaygroundTab = observer(function PlaygroundTab() {
             <InfoTooltip
               className={styles.configTooltip}
               message={
-                "An EdgeQL expression returning a set of objects with AI indexes."
+                "An NativeQL expression returning a set of objects with AI indexes."
               }
             />
           </div>

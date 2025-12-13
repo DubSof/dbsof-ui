@@ -130,11 +130,11 @@ export const QueryEditorView = observer(function QueryEditorView() {
             <div
               className={cn(styles.tab, {
                 [styles.selected]:
-                  editorState.selectedEditor === EditorKind.EdgeQL,
+                  editorState.selectedEditor === EditorKind.NativeQL,
               })}
-              onClick={() => editorState.setSelectedEditor(EditorKind.EdgeQL)}
+              onClick={() => editorState.setSelectedEditor(EditorKind.NativeQL)}
             >
-              <span>EdgeQL</span>
+              <span>NativeQL</span>
               {/* <EditorTabIcon /> */}
             </div>
             <div
@@ -146,7 +146,7 @@ export const QueryEditorView = observer(function QueryEditorView() {
                 editorState.setSelectedEditor(EditorKind.VisualBuilder)
               }
             >
-              <span>EdgeQL Builder</span>
+              <span>NativeQL Builder</span>
               {/* <BuilderTabIcon /> */}
             </div>
             {editorState.sqlModeSupported ? (
@@ -269,7 +269,7 @@ export const QueryEditorView = observer(function QueryEditorView() {
                     SplitViewDirection.vertical,
               })}
             >
-              {editorState.selectedEditor === EditorKind.EdgeQL ||
+              {editorState.selectedEditor === EditorKind.NativeQL ||
               editorState.selectedEditor === EditorKind.SQL ? (
                 <>
                   <div className={styles.editorBlockInner}>

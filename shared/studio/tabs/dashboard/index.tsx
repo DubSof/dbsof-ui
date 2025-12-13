@@ -179,7 +179,7 @@ const FirstRunDashboard = observer(function FirstRunDashboard() {
           </div>
 
           <div className={styles.importData}>
-            <h3>First time using Gel?</h3>
+            <h3>First time using Studio?</h3>
             <p>
               {exampleDBExists ? "Switch to the" : "Create an"} example{" "}
               {dbOrBranch} with our "movies" schema and data set, and play with

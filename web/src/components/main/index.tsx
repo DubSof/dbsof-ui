@@ -23,8 +23,8 @@ const Main = observer(function Main() {
     document.title = instanceName
       ? `${instanceName}${
           match ? ` / ${match.params.databaseName}` : ""
-        } | Gel Local`
-      : "Gel Local";
+        } | Studio Local`
+      : "Studio Local";
   }, [instanceName, match]);
 
   return (

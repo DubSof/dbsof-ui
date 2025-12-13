@@ -1,4 +1,4 @@
-import {GelError} from "@dbsof/platform/client";
+import {ClientLibraryError} from "@dbsof/platform/client";
 import {ErrorAttr} from "@dbsof/platform/client";
 import {Language} from "@dbsof/platform/client";
 import {utf8Decoder} from "@dbsof/platform/client";
@@ -41,7 +41,7 @@ export function extractErrorDetails(
     msg: (err as any)._message ?? err.message,
   };
 
-  if (err instanceof GelError && (err as any)._attrs) {
+  if ((err as any)._attrs) {
     const attrs = (err as any)._attrs as Map<number, Uint8Array | string>;
     const hint = attrs.get(ErrorAttr.hint);
     if (hint) {

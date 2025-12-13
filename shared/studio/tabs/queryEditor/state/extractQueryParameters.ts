@@ -194,7 +194,7 @@ function resolveCastType(
   throw new Error("Invalid parameter cast");
 }
 
-export function extractEdgeQLQueryParameters(
+export function extractNativeQLQueryParameters(
   query: string,
   schemaScalars: Map<string, SchemaScalarType>
 ): Map<string, ResolvedParameter> | null {

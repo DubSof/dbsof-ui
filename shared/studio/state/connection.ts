@@ -4,7 +4,6 @@ import {createContext, _async, _await} from "mobx-keystone";
 import {
   AuthenticationError,
   ClientError,
-  GelError,
   SHOULD_RETRY,
   TransactionConflictError,
 } from "@dbsof/platform/client";
@@ -57,7 +56,7 @@ interface QueryResult {
   protoVer: ProtocolVersion;
   capabilities: number;
   status: string;
-  warnings: GelError[];
+  warnings: Error[];
 }
 
 interface ParseResult {
@@ -65,7 +64,7 @@ interface ParseResult {
   outCodecBuf: Uint8Array;
   protoVer: ProtocolVersion;
   duration: number;
-  warnings: GelError[];
+  warnings: Error[];
 }
 
 type QueryKind = "query" | "parse" | "execute";
@@ -177,7 +176,7 @@ export class Connection {
 
   private readonly _codecCache = new LRU<
     string,
-    [any, any, Uint8Array, number, GelError[]]
+    [any, any, Uint8Array, number, Error[]]
   >({
     capacity: 200,
   });
@@ -239,7 +238,7 @@ export class Connection {
     params?: QueryParams,
     opts: QueryOpts = {},
     abortSignal?: AbortSignal,
-    language: Language = Language.EDGEQL
+    language: Language = Language.NativeQL
   ): Promise<QueryResult> {
     return this._addQueryToQueue(
       "query",
@@ -253,7 +252,7 @@ export class Connection {
 
   parse(
     query: string,
-    language: Language = Language.EDGEQL,
+    language: Language = Language.NativeQL,
     abortSignal?: AbortSignal
   ): Promise<ParseResult> {
     return this._addQueryToQueue(
@@ -267,7 +266,7 @@ export class Connection {
 
   execute(
     script: string,
-    language: Language = Language.EDGEQL
+    language: Language = Language.NativeQL
   ): Promise<void> {
     return this._addQueryToQueue("execute", language, script);
   }
@@ -356,7 +355,7 @@ export class Connection {
           throw error;
         }
         if (
-          ((error instanceof GelError && error.hasTag(SHOULD_RETRY)) ||
+          ((error instanceof ClientError && (error as any).hasTag?.(SHOULD_RETRY)) ||
             error instanceof TypeError) &&
           (capabilities === 0 || error instanceof TransactionConflictError)
         ) {
@@ -434,7 +433,7 @@ export class Connection {
       let inCodec: ICodec,
         outCodec: ICodec,
         outCodecBuf: Uint8Array | null,
-        warnings: GelError[],
+        warnings: Error[],
         // @ts-ignore - Ignore _ is declared but not used error
         _;
 

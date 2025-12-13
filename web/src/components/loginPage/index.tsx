@@ -61,7 +61,7 @@ export default function LoginPage() {
 
       <ModalPanel
         className={styles.loginPanel}
-        title="Welcome to Gel UI"
+        title="Welcome to Studio UI"
         onSubmit={onSubmit}
         formError={error}
         footerButtons={
@@ -80,8 +80,8 @@ export default function LoginPage() {
             <div className={styles.loginInfo}>
               <InfoIcon />
               <div>
-                <span>It looks like you're running Gel locally.</span>
-                <br /> If you created this instance using the Gel CLI, the
+                <span>It looks like you're running Studio locally.</span>
+                <br /> If you created this instance using the Studio CLI, the
                 easiest way to login is by running your platform's UI launcher
                 command from your project directory.
               </div>

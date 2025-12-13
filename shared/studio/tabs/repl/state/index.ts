@@ -476,7 +476,7 @@ export class Repl extends Model({
     dbState.setLoadingTab(Repl, true);
 
     const lang =
-      this.language === ReplLang.SQL ? Language.SQL : Language.EDGEQL;
+      this.language === ReplLang.SQL ? Language.SQL : Language.NativeQL;
     let resultData: QueryResultData | undefined = undefined;
     let skipStoreHistoryItem = false;
     try {

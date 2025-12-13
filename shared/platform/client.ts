@@ -1,4 +1,4 @@
-export {
+import {
   _CodecsRegistry,
   _ReadBuffer,
   _ICodec,
@@ -6,7 +6,6 @@ export {
   MultiRange,
   Range,
   LocalDateTime,
-  GelError,
   AuthenticationError,
   DuplicateDatabaseDefinitionError,
   CardinalityViolationError,
@@ -24,12 +23,45 @@ export {
   ClientError,
   TransactionConflictError,
   SHOULD_RETRY,
-  Cardinality,
-  Language,
+  Cardinality as DriverCardinality,
   OutputFormat,
 } from "gel";
 
-export type {ProtocolVersion, QueryArgs, Language, Cardinality} from "gel/dist/ifaces";
+export {
+  _CodecsRegistry,
+  _ReadBuffer,
+  _ICodec,
+  Options,
+  MultiRange,
+  Range,
+  LocalDateTime,
+  AuthenticationError,
+  DuplicateDatabaseDefinitionError,
+  CardinalityViolationError,
+  AccessError,
+  UnknownDatabaseError,
+  Duration,
+  RelativeDuration,
+  DateDuration,
+  LocalDate,
+  LocalTime,
+  ConfigMemory,
+  Float16Array,
+  SparseVector,
+  parseWKT,
+  ClientError,
+  TransactionConflictError,
+  SHOULD_RETRY,
+  DriverCardinality,
+  OutputFormat,
+};
+
+export enum Language {
+  NativeQL = "nativeql",
+  SQL = "sql",
+}
+
+export type {ProtocolVersion, QueryArgs} from "gel/dist/ifaces";
 export {ErrorAttr} from "gel/dist/errors/base";
 export {utf8Decoder, encodeB64, ReadBuffer, WriteBuffer} from "gel/dist/primitives/buffer";
 export {Options as ConnectionOptions} from "gel/dist/options";

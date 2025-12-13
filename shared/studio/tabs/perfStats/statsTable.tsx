@@ -241,7 +241,7 @@ export const QueryStatsRow = observer(function QueryStatsRow({
             </div>
 
             {state.hasAnalyzePermissions &&
-            queryStats.query_type === "EdgeQL" ? (
+            queryStats.query_type === "NativeQL" ? (
               <Button
                 className={styles.analyseQueryButton}
                 kind="outline"
