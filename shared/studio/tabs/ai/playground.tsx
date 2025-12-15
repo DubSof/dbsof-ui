@@ -88,7 +88,7 @@ export const PlaygroundTab = observer(function PlaygroundTab() {
             <InfoTooltip
               className={styles.configTooltip}
               message={
-                "An NativeQL expression returning a set of objects with AI indexes."
+                "An SQL expression returning a set of objects with AI indexes."
               }
             />
           </div>

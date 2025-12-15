@@ -14,7 +14,6 @@ import {Language} from "@dbsof/platform/client";
 
 import {
   deserializeResolvedParameter,
-  extractNativeQLQueryParameters,
   extractSQLQueryParameters,
   ResolvedParameter,
   SerializedResolvedParameter,
@@ -129,19 +128,14 @@ export class QueryParamsEditor extends Model({
 
     if (!schemaScalars || query == null) return;
 
-    let params: Map<string, ResolvedParameter> | null = null;
-    if (this.lang === Language.NativeQL) {
-      params = extractNativeQLQueryParameters(query, schemaScalars);
-    } else {
-      const conn = connCtx.get(this)!;
-      this._currentFetchParamsTask = new AbortController();
-      params = await extractSQLQueryParameters(
-        query,
-        schemaScalars,
-        conn,
-        this._currentFetchParamsTask.signal
-      );
-    }
+    const conn = connCtx.get(this)!;
+    this._currentFetchParamsTask = new AbortController();
+    const params = await extractSQLQueryParameters(
+      query,
+      schemaScalars,
+      conn,
+      this._currentFetchParamsTask.signal
+    );
     if (params) {
       this.updateCurrentParams(params);
     }

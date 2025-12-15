@@ -1,0 +1,2 @@
+[console_scripts]
+dbsof-server = dbsof_server.app:main

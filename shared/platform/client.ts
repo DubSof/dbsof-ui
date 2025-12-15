@@ -135,7 +135,6 @@ export enum OutputFormat {
 }
 
 export enum Language {
-  NativeQL = "nativeql",
   SQL = "sql",
 }
 
@@ -209,6 +208,100 @@ export class Box3D {}
 export const PostGIS = {} as const;
 export class Event {}
 export const cryptoUtils = {} as const;
-export function getHTTPSCRAMAuth() {
-  return null;
+
+export type CodecKindType =
+  | "scalar"
+  | "object"
+  | "namedtuple"
+  | "record"
+  | "set"
+  | "array"
+  | "tuple"
+  | "range"
+  | "multirange";
+
+class SimpleScalarCodec implements _ICodec {
+  constructor(private name: string) {}
+  getKind() {
+    return "scalar" as CodecKindType;
+  }
+  getKnownTypeName() {
+    return this.name;
+  }
+  getSubcodecs() {
+    return [];
+  }
+}
+
+type SimpleField = {name: string; implicit?: boolean};
+
+export class SimpleObjectCodec implements _ICodec {
+  constructor(private fields: SimpleField[]) {}
+  getKind() {
+    return "object" as CodecKindType;
+  }
+  getSubcodecs() {
+    return this.fields.map(() => new SimpleScalarCodec("std::str"));
+  }
+  getFields() {
+    return this.fields.map((f, i) => ({
+      name: f.name,
+      implicit: !!f.implicit,
+      getColumnName() {
+        return f.name;
+      },
+      hasSubtypes() {
+        return false;
+      },
+      isMandatory() {
+        return true;
+      },
+      allowNull() {
+        return true;
+      },
+      isImplicit() {
+        return !!f.implicit;
+      },
+      subtypesDepth() {
+        return 0;
+      },
+      implicitDefaultDepth() {
+        return 0;
+      },
+      card: 1,
+      kind: "property",
+      required: false,
+      parentField: i,
+      hasServerDefault() {
+        return false;
+      },
+      getSharedParentTypeIndexes() {
+        return [];
+      },
+    }));
+  }
+}
+
+export function buildObjectCodec(columns: string[]) {
+  return new SimpleObjectCodec(columns.map((name) => ({name})));
+}
+
+
+const env =
+  (typeof import.meta !== "undefined" && (import.meta as any).env) ||
+  ({} as Record<string, string | undefined>);
+
+export const mockMode = env.VITE_USE_MOCKS !== "false";
+
+export function getHTTPSCRAMAuth(
+  _cryptoUtils?: typeof cryptoUtils
+): ((
+  serverUrl: string,
+  username: string,
+  password: string
+) => Promise<string>) {
+  return async (_serverUrl: string, username: string, _password: string) => {
+    const user = username?.trim() || "user";
+    return Promise.resolve(`mock-token-${user}`);
+  };
 }

@@ -1,5 +1,5 @@
 import * as z from "zod";
-import {AuthenticationError} from "@dbsof/platform/client";
+import {AuthenticationError, mockMode} from "@dbsof/platform/client";
 
 import {InstanceState} from "@dbsof/studio/state/instance";
 import {
@@ -105,6 +105,22 @@ export async function fetchMigrationsData(
   instanceId: string,
   instanceState: InstanceState | null
 ): Promise<MigrationsData[] | null> {
+  if (mockMode) {
+    return [
+      {
+        branch: "main",
+        migrations: [
+          {id: "m1", name: "0001-demo", parentId: null},
+          {id: "m2", name: "0002-demo", parentId: "m1"},
+        ],
+      },
+      {
+        branch: "playground",
+        migrations: [{id: "p1", name: "0001-play", parentId: null}],
+      },
+    ];
+  }
+
   if (instanceState && instanceState.databases === null) {
     return null;
   }

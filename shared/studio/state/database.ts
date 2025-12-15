@@ -43,7 +43,7 @@ import {fetchSchemaData, storeSchemaData} from "../idbStore";
 import {instanceCtx} from "./instance";
 import {Capabilities, connCtx, Connection} from "./connection";
 import {SessionState, sessionStateCtx} from "./sessionState";
-import {AuthenticationError} from "@dbsof/platform/client";
+import {AuthenticationError, mockMode} from "@dbsof/platform/client";
 
 export const dbCtx = createMobxContext<DatabaseState>();
 
@@ -243,156 +243,131 @@ export class DatabaseState extends Model({
 
     this.fetchingSchemaData = true;
 
-    const conn = this.connection;
-    const instanceState = instanceCtx.get(this)!;
-
     try {
-      const [schemaInfo, storedSchemaData] = yield* _await(
-        Promise.all([
-          conn
-            .query(
-              `SELECT {
-                migration := (SELECT (
-                  SELECT schema::Migration {
-                    children := .<parents[IS schema::Migration]
-                  } FILTER NOT EXISTS .children
-                ) {id, name}),
-                version := sys::get_version(),
-                versionStr := sys::get_version_as_str(),
-              }`,
-              undefined,
-              {ignoreSessionConfig: true, blocking: true}
-            )
-            .then(({result}) => ({
-              schemaId: `${result![0].versionStr}__${
-                result![0].migration[0]?.id ?? "empty"
-              }`,
-              schemaMigration: result![0].migration[0]?.name ?? null,
-              version: result![0].version as {
-                major: number;
-                minor: number;
-                stage: string;
-                stage_no: number;
-                local: string[];
-              },
-            }))
-            .catch((err) => {
-              if (err instanceof AuthenticationError) {
-                return null;
-              }
-              throw err;
-            }),
-          fetchSchemaData(this.name, instanceState.instanceId!),
-        ])
+      const instanceState = instanceCtx.get(this)!;
+      const instanceId = instanceState.instanceId ?? "demo";
+      const res = yield* _await(
+        fetch(
+          `${instanceState.serverUrl}/instances/${encodeURIComponent(
+            instanceId
+          )}/databases/${encodeURIComponent(this.name)}/schema`
+        )
       );
+      const schemaJson: {
+        types: {name: string; columns?: {name: string; type: string; nullable: boolean; default: string | null}[]}[];
+        version: string;
+      } = yield* _await(res.json());
 
-      if (schemaInfo === null) {
-        this.branchAccessDisallowed = true;
-        return;
-      }
-
-      if (this.schemaId === schemaInfo.schemaId) {
-        return;
-      }
-
-      const schemaVersion = [
-        Number(schemaInfo.version.major),
-        Number(schemaInfo.version.minor),
-        schemaInfo.version.stage as any,
-        Number(schemaInfo.version.stage_no),
-      ] as SchemaVersion;
-
-      let rawData: RawIntrospectionResult;
-      if (
-        storedSchemaData?.schemaId !== schemaInfo.schemaId ||
-        storedSchemaData.version !== SCHEMA_DATA_VERSION
-      ) {
-        // Directly set loading tab by model name to avoid cyclic dependency
-        // on Schema state class
-        this.loadingTabs.set("Schema", true);
-        try {
-          rawData = yield* _await(
-            conn
-              .query(getIntrospectionQuery(schemaVersion), undefined, {
-                ignoreSessionConfig: true,
-                blocking: true,
-              })
-              .then(({result}) => {
-                return result![0] as RawIntrospectionResult;
-              })
-          );
-        } finally {
-          this.loadingTabs.set("Schema", false);
-        }
-        storeSchemaData(this.name, instanceState.instanceId!, {
-          version: SCHEMA_DATA_VERSION,
-          schemaId: schemaInfo.schemaId,
-          schemaLastMigration: schemaInfo.schemaMigration,
-          data: rawData,
-        });
-      } else {
-        rawData = storedSchemaData.data;
-      }
-
-      const {
-        types,
-        pointers,
-        functions,
-        operators,
-        constraints,
-        annotations,
-        aliases,
-        globals,
-        extensions,
-      } = buildTypesGraph(rawData, schemaVersion);
-
-      const schemaData: SchemaData = {
-        objects: new Map(
-          [...types.values()]
-            .filter((t) => t.schemaType === "Object")
-            .map((t) => [t.id, t as SchemaObjectType])
-        ),
-        objectsByName: new Map(
-          [...types.values()]
-            .filter((t) => t.schemaType === "Object")
-            .map((t) => [t.name, t as SchemaObjectType])
-        ),
-        functions,
-        operators,
-        constraints,
-        scalars: new Map(
-          [...types.values()]
-            .filter((t) => t.schemaType === "Scalar")
-            .map((t) => [t.name, t as SchemaScalarType])
-        ),
-        types,
-        pointers,
-        annotations,
-        aliases,
-        globals,
-        extensions,
-        shortNamesByModule: [
-          ...([...types.values()].filter(
-            (t) => t.schemaType === "Object" || t.schemaType === "Scalar"
-          ) as (SchemaObjectType | SchemaScalarType)[]),
-          ...[...pointers.values()].filter((p) => p.abstract),
-          ...functions.values(),
-          ...constraints.values(),
-          ...annotations.values(),
-          ...aliases.values(),
-          ...globals.values(),
-        ].reduce((modules, item) => {
-          if (!modules.has(item.module)) {
-            modules.set(item.module, new Set());
-          }
-          modules.get(item.module)!.add(item.shortName);
-          return modules;
-        }, new Map<string, Set<string>>()),
+      const stringScalar: SchemaScalarType = {
+        schemaType: "Scalar",
+        id: "std::str",
+        name: "std::str",
+        escapedName: "std::str",
+        module: "std",
+        shortName: "str",
+        abstract: false,
+        builtin: true,
+        from_alias: false,
+        default: null,
+        enum_values: null,
+        arg_values: null,
+        isSequence: false,
+        knownBaseType: null,
+        bases: [],
+        constraints: [],
+        annotations: [],
+        isDeprecated: false,
       };
 
-      this.schemaId = schemaInfo.schemaId;
-      this.schemaLastMigration = schemaInfo.schemaMigration;
-      this.schemaData = schemaData;
+      const objects = new Map<string, SchemaObjectType>();
+      const objectsByName = new Map<string, SchemaObjectType>();
+
+      for (const t of schemaJson.types ?? []) {
+        const properties: {[name: string]: SchemaProperty} = {};
+        const pointers: SchemaProperty[] = [];
+        for (const col of t.columns ?? []) {
+          const prop: SchemaProperty = {
+            schemaType: "Pointer",
+            type: "Property",
+            id: `${t.name}::${col.name}`,
+            name: col.name,
+            escapedName: col.name,
+            module: "default",
+            shortName: col.name,
+            abstract: false,
+            builtin: false,
+            "@owned": true,
+            target: stringScalar,
+            source: null,
+            required: !col.nullable,
+            readonly: false,
+            cardinality: "One",
+            default: col.default,
+            expr: null,
+            secret: false,
+            constraints: [],
+            annotations: [],
+            rewrites: [],
+            isDeprecated: false,
+            bases: [],
+          };
+          properties[col.name] = prop;
+          pointers.push(prop);
+        }
+
+        const obj: SchemaObjectType = {
+          schemaType: "Object",
+          id: t.name,
+          name: t.name,
+          escapedName: t.name,
+          module: "default",
+          shortName: t.name,
+          abstract: false,
+          builtin: false,
+          readonly: false,
+          from_alias: false,
+          expr: "",
+          bases: [],
+          extendedBy: [],
+          ancestors: [],
+          descendents: [],
+          constraints: [],
+          annotations: [],
+          isDeprecated: false,
+          insectionOf: null,
+          unionOf: null,
+          properties,
+          links: {},
+          pointers,
+          indexes: [],
+          accessPolicies: [],
+          triggers: [],
+        };
+
+        objects.set(obj.id, obj);
+        objectsByName.set(obj.name, obj);
+      }
+
+      runInAction(() => {
+        this.schemaId = schemaJson.version ?? "api-schema";
+        this.schemaLastMigration = null;
+        this.schemaData = {
+          objects,
+          objectsByName,
+          functions: new Map(),
+          operators: new Map(),
+          constraints: new Map(),
+          scalars: new Map([[stringScalar.name, stringScalar]]),
+          types: new Map(),
+          pointers: new Map(),
+          aliases: new Map(),
+          globals: new Map(),
+          annotations: new Map(),
+          extensions: [],
+          shortNamesByModule: new Map([["default", new Set(objectsByName.keys())]]),
+        };
+        this.objectCount = objects.size;
+      });
     } finally {
       this.fetchingSchemaData = false;
     }

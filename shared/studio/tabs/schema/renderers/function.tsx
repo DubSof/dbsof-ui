@@ -75,7 +75,8 @@ export const FunctionTypeRenderer = observer(function FunctionTypeRenderer({
         </>
       ) : (
         <>
-          {type.language} <Str>{type.body}</Str>
+          {type.language === "NativeQL" ? "SQL" : type.language}{" "}
+          <Str>{type.body}</Str>
         </>
       )}
       <Punc>{";"}</Punc>
@@ -168,7 +169,9 @@ export function functionToSDL(type: SchemaFunction) {
       ? "(builtin function)"
       : type.language === "NativeQL"
       ? `(${type.body})`
-      : `${type.language} '${type.body}'`
+      : `${type.language === "NativeQL" ? "SQL" : type.language} '${
+          type.body
+        }'`
   };`;
 
   return `function ${type.name}(${

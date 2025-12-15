@@ -8,6 +8,7 @@ import {
   ProtocolVersion,
   QueryArgs,
 } from "@dbsof/platform/client";
+import {buildObjectCodec} from "@dbsof/platform/client";
 
 export {Capabilities};
 export type QueryParams = QueryArgs;
@@ -111,7 +112,7 @@ export class Connection {
     params?: QueryParams,
     opts: QueryOpts = {},
     abortSignal?: AbortSignal,
-    language: Language = Language.NativeQL
+    language: Language = Language.SQL
   ): Promise<QueryResult> {
     return this._addQueryToQueue(
       "query",
@@ -125,7 +126,7 @@ export class Connection {
 
   parse(
     query: string,
-    language: Language = Language.NativeQL,
+    language: Language = Language.SQL,
     abortSignal?: AbortSignal
   ): Promise<ParseResult> {
     return this._addQueryToQueue(
@@ -137,7 +138,7 @@ export class Connection {
     );
   }
 
-  execute(script: string, language: Language = Language.NativeQL): Promise<void> {
+  execute(script: string, language: Language = Language.SQL): Promise<void> {
     return this._addQueryToQueue("execute", language, script) as Promise<void>;
   }
 
@@ -194,29 +195,48 @@ export class Connection {
     const emptyBuffers = new Uint8Array();
     const duration: QueryDuration = {prepare: 0, execute: 0};
 
-    if (kind === "execute") {
-      return;
+    // simple REST bridge to dev API
+    const baseUrl = this.config.serverUrl || "http://localhost:5757";
+    const url = new URL(
+      `/instances/default/databases/${encodeURIComponent(
+        this.config.database
+      )}/sql/commands`,
+      baseUrl
+    ).toString();
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: query.query,
+        params: query.params ?? {},
+        mode: "tabular",
+      }),
+      signal: abortSignal ?? undefined,
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(errText || `Query failed (${response.status})`);
     }
 
-    if (kind === "parse") {
-      const parseResult: ParseResult = {
-        inCodec: null,
-        outCodecBuf: emptyBuffers,
-        protoVer: [0, 0],
-        duration: 0,
-        warnings: [],
-      };
-      return parseResult;
-    }
+    const data = await response.json();
+    const rows = Array.isArray(data.rows) ? data.rows : [];
+    const columns = Array.isArray(data.columns) ? data.columns : [];
+    const codec = buildObjectCodec(columns);
+    const result: any = rows as any[];
+    (result as any)._codec = codec;
 
     const queryResult: QueryResult = {
-      result: null,
+      result,
       duration,
       outCodecBuf: emptyBuffers,
       resultBuf: emptyBuffers,
-      protoVer: [0, 0],
+      protoVer: [1, 0],
       capabilities: Capabilities.NONE,
-      status: "OK",
+      status: data.status ?? "OK",
       warnings: [],
     };
 

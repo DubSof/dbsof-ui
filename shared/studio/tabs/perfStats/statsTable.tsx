@@ -240,8 +240,7 @@ export const QueryStatsRow = observer(function QueryStatsRow({
               </div>
             </div>
 
-            {state.hasAnalyzePermissions &&
-            queryStats.query_type === "NativeQL" ? (
+            {state.hasAnalyzePermissions ? (
               <Button
                 className={styles.analyseQueryButton}
                 kind="outline"
@@ -259,9 +258,7 @@ export const QueryStatsRow = observer(function QueryStatsRow({
               />
               <CodeBlock
                 code={queryStats.query}
-                language={
-                  queryStats.query_type === "SQL" ? sqlLang : undefined
-                }
+                language={sqlLang}
               />
             </div>
           </div>

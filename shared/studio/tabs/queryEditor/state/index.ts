@@ -171,7 +171,7 @@ export const queryEditorCtx = createMobxContext<QueryEditor>();
 @model("QueryEditor")
 export class QueryEditor extends Model({
   _queryParamsEditor: prop(
-    () => new QueryParamsEditor({lang: Language.NativeQL})
+    () => new QueryParamsEditor({lang: Language.SQL})
   ),
   _sqlParamsEditor: prop(() => new QueryParamsEditor({lang: Language.SQL})),
 
@@ -190,8 +190,7 @@ export class QueryEditor extends Model({
 
   @computed
   get sqlModeSupported(): boolean {
-    const serverVersion = instanceCtx.get(this)!.serverVersion;
-    return !serverVersion || serverVersion.major >= 6;
+    return false;
   }
 
   @modelAction
@@ -781,7 +780,7 @@ export class QueryEditor extends Model({
       ?.value as bigint | undefined;
 
     const lang =
-      this.selectedEditor === EditorKind.SQL ? Language.SQL : Language.NativeQL;
+      this.selectedEditor === EditorKind.SQL ? Language.SQL : Language.SQL;
     try {
       const {
         result,
