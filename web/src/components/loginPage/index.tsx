@@ -9,13 +9,15 @@ import {
   SubmitButton,
 } from "@dbsof/common/newui";
 
-import {serverUrl, setAuthToken} from "../../state/models/app";
+import {auth} from "@dbsof/auth";
 import {getHTTPSCRAMAuth} from "@dbsof/platform/client";
 import {Logo} from "../header";
 
 import styles from "./loginPage.module.scss";
 
+// Initialize auth with login function
 const httpSCRAMAuth = getHTTPSCRAMAuth();
+auth.setLoginFunction(httpSCRAMAuth);
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -35,8 +37,7 @@ export default function LoginPage() {
   const onSubmit = handleSubmit(async ({username, password}) => {
     setError(null);
     try {
-      const authToken = await httpSCRAMAuth(serverUrl, username, password);
-      setAuthToken(username, authToken);
+      await auth.login(username, password);
     } catch (err) {
       console.error(err);
       setError("Login failed: username or password may be incorrect");

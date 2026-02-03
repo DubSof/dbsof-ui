@@ -42,14 +42,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e4e4e4;
+  background: var(--grey90);
 
   @include breakpoint(mobile) {
     display: none;
   }
 
   @include darkTheme {
-    background: #0f0f0f;
+    background: var(--grey8);
   }
 
   .grabHandle {
@@ -65,7 +65,7 @@
     width: 7px;
     height: 36px;
     flex-shrink: 0;
-    background: #e4e4e4;
+    background: var(--grey90);
     border-radius: 5px;
     pointer-events: none;
 
@@ -90,7 +90,7 @@
     }
 
     @include darkTheme {
-      background: #0f0f0f;
+      background: var(--grey8);
     }
   }
 

@@ -1,7 +1,7 @@
 @import "../../mixins.scss";
 
 .tooltip {
-  --tooltipBg: #1f8aed;
+  --tooltipBg: var(--syntax-blue);
 
   position: absolute;
   font-size: 12px;
@@ -9,7 +9,7 @@
   font-weight: 600;
   top: calc(100% + 6px);
   background: var(--tooltipBg);
-  color: #fff;
+  color: var(--white);
   border-radius: 4px;
   padding: 5px 6px 6px 6px;
   opacity: 0;
@@ -52,6 +52,6 @@
   }
 
   @include darkTheme {
-    --tooltipBg: #3a82c4;
+    --tooltipBg: var(--syntax-blue);
   }
 }

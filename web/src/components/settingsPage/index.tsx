@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUserSettings, updateUserSettings, UserSettings } from "@dbsof/platform/userSettings";
+import { CustomScrollbars } from "@dbsof/common/ui/customScrollbar";
+import { Button, TextInput, Checkbox } from "@dbsof/common/newui";
+import Spinner from "@dbsof/common/ui/spinner";
 import styles from "./settingsPage.module.scss";
 
 export function SettingsPage() {
@@ -53,75 +56,83 @@ export function SettingsPage() {
   if (loading) {
     return (
       <div className={styles.settingsPage}>
-        <div className={styles.loading}>Loading settings...</div>
+        <div className={styles.loading}>
+          <Spinner size={20} />
+          Loading settings...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.settingsPage}>
-      <div className={styles.header}>
-        <h1>User Settings</h1>
-        <button className={styles.backButton} onClick={() => navigate(-1)}>
-          ← Back
-        </button>
-      </div>
+    <CustomScrollbars className={styles.settingsPage} innerClass={styles.scrollableContent}>
+      <div className={styles.scrollableContent}>
+        <div className={styles.content}>
+          <div className={styles.header}>
+            <h1>User Settings</h1>
+            <Button kind="outline" onClick={() => navigate(-1)}>
+              ← Back
+            </Button>
+          </div>
 
-      {error && <div className={styles.error}>{error}</div>}
-      {saveSuccess && <div className={styles.success}>Settings saved successfully!</div>}
+          {error && <div className={styles.error}>{error}</div>}
+          {saveSuccess && <div className={styles.success}>Settings saved successfully!</div>}
 
-      <div className={styles.settingsForm}>
-        {Object.keys(settings).length === 0 ? (
-          <div className={styles.empty}>No settings configured yet.</div>
-        ) : (
-          Object.entries(settings).map(([key, value]) => (
-            <div key={key} className={styles.settingRow}>
-              <label className={styles.settingLabel}>{key}</label>
-              <div className={styles.settingInput}>
-                {typeof value === "boolean" ? (
-                  <label className={styles.checkbox}>
-                    <input
-                      type="checkbox"
-                      checked={value}
-                      onChange={(e) => handleChange(key, e.target.checked)}
-                    />
-                    <span>{value ? "Enabled" : "Disabled"}</span>
-                  </label>
-                ) : typeof value === "number" ? (
-                  <input
-                    type="number"
-                    value={value}
-                    onChange={(e) => handleChange(key, Number(e.target.value))}
-                  />
-                ) : value === null ? (
-                  <input
-                    type="text"
-                    value=""
-                    placeholder="null"
-                    onChange={(e) => handleChange(key, e.target.value || null)}
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    value={String(value)}
-                    onChange={(e) => handleChange(key, e.target.value)}
-                  />
-                )}
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+          <div className={styles.settingsForm}>
+            {Object.keys(settings).length === 0 ? (
+              <div className={styles.empty}>No settings configured yet.</div>
+            ) : (
+              Object.entries(settings).map(([key, value]) => (
+                <div key={key} className={styles.settingRow}>
+                  <label className={styles.settingLabel}>{key}</label>
+                  <div className={styles.settingInput}>
+                    {typeof value === "boolean" ? (
+                      <Checkbox
+                        label={value ? "Enabled" : "Disabled"}
+                        checked={value}
+                        onChange={(checked) => handleChange(key, checked)}
+                      />
+                    ) : typeof value === "number" ? (
+                      <TextInput
+                        type="text"
+                        label=""
+                        value={String(value)}
+                        onChange={(e) => handleChange(key, Number(e.target.value))}
+                      />
+                    ) : value === null ? (
+                      <TextInput
+                        type="text"
+                        label=""
+                        value=""
+                        placeholder="null"
+                        onChange={(e) => handleChange(key, e.target.value || null)}
+                      />
+                    ) : (
+                      <TextInput
+                        type="text"
+                        label=""
+                        value={String(value)}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                      />
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
 
-      <div className={styles.actions}>
-        <button
-          className={styles.saveButton}
-          onClick={handleSave}
-          disabled={saving || Object.keys(settings).length === 0}
-        >
-          {saving ? "Saving..." : "Save Settings"}
-        </button>
+          <div className={styles.actions}>
+            <Button
+              kind="primary"
+              onClick={handleSave}
+              disabled={saving || Object.keys(settings).length === 0}
+              loading={saving}
+            >
+              Save Settings
+            </Button>
+          </div>
+        </div>
       </div>
-    </div>
+    </CustomScrollbars>
   );
 }

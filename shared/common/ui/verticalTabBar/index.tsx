@@ -51,9 +51,11 @@ export function VerticalTabBar<TabId extends string>({
       }
     }
   );
+  const [hoverExpanded, setHoverExpanded] = useState(false);
   const [showTabTooltips, setShowTabTooltips] = useState(false);
   const tabMouseEnterTimeout = useRef<number | null>(null);
   const tabMouseLeaveTimeout = useRef<number | null>(null);
+  const sidebarHoverTimeout = useRef<number | null>(null);
 
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
@@ -78,13 +80,32 @@ export function VerticalTabBar<TabId extends string>({
     };
   }, [currentTabId]);
 
+  const isExpanded = expanded || hoverExpanded;
+
   return (
     <div
       className={cn(styles.tabs, className, {
-        [styles.expanded]: expanded,
+        [styles.expanded]: isExpanded,
         [styles.showTooltips]:
-          !expanded && showTabTooltips && globalShowTooltips,
+          !isExpanded && showTabTooltips && globalShowTooltips,
       })}
+      onMouseEnter={() => {
+        if (!expanded) {
+          if (sidebarHoverTimeout.current) {
+            clearTimeout(sidebarHoverTimeout.current);
+          }
+          sidebarHoverTimeout.current = setTimeout(() => {
+            setHoverExpanded(true);
+          }, 200) as unknown as number;
+        }
+      }}
+      onMouseLeave={() => {
+        if (sidebarHoverTimeout.current) {
+          clearTimeout(sidebarHoverTimeout.current);
+          sidebarHoverTimeout.current = null;
+        }
+        setHoverExpanded(false);
+      }}
     >
       {tabs.map((tab) => (
         <Link

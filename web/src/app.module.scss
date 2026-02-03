@@ -58,6 +58,21 @@
   --btn-green: #0ccb93;
   --btn-text-hover: #fafafa;
 
+  // Tooltips
+  --tooltip-bg: #4c4c4c;
+  --tooltip-text: #f5f5f5;
+
+  // Loading indicators
+  --loading-indicator-from: #0ccb93;
+  --loading-indicator-to-light: #d0f9ed;
+  --loading-indicator-to-dark: #1f1f1f;
+
+  // Error colors
+  --error-color: #db5246;
+  --error-border: #db5246;
+  --error-bg-light: #fce3e3;
+  --error-bg-dark: #4c2323;
+
   @include darkTheme {
     --app-bg: #141414;
     --app-panel-bg: #242424;
@@ -97,5 +112,20 @@
     --btn-green: #29b189;
     --btn-text-color: #adadad;
     --btn-text-hover: #141414;
+
+    // Tooltips
+    --tooltip-bg: #adadad;
+    --tooltip-text: #141414;
+
+    // Loading indicators
+    --loading-indicator-from: #29b189;
+    --loading-indicator-to-light: #d0f9ed;
+    --loading-indicator-to-dark: #1f1f1f;
+
+    // Error colors
+    --error-color: #e06b6b;
+    --error-border: #b24c4c;
+    --error-bg-light: #fce3e3;
+    --error-bg-dark: #4c2323;
   }
 }

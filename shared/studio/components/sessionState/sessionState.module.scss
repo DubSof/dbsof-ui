@@ -39,7 +39,7 @@
     transition: opacity 0s 0.1s;
 
     @include darkTheme {
-      fill: #2e2e2e;
+      fill: var(--grey18);
     }
   }
 
@@ -214,8 +214,8 @@
 }
 
 .panelButton {
-  color: #a565cd;
-  background-color: #fff;
+  color: var(--accentViolet);
+  background-color: var(--white);
   border: 1px solid var(--Grey90);
   height: 26px;
   padding: 0 7px;
@@ -238,7 +238,7 @@
   @include darkTheme {
     background-color: var(--Grey14);
     border-color: var(--Grey25);
-    color: #d19cf1;
+    color: var(--accentViolet);
   }
 }
 
@@ -254,7 +254,7 @@
   font-weight: 450;
   margin-right: 8px;
   margin-bottom: 8px;
-  color: #808080;
+  color: var(--font-inactive-gray);
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
@@ -290,7 +290,7 @@
   @include darkTheme {
     background-color: var(--Grey22);
     border-color: var(--Grey25);
-    color: #bfbfbf;
+    color: var(--grey75);
   }
 }
 
@@ -329,8 +329,8 @@
     top: 2px;
     right: 2px;
     margin: 8px;
-    background-color: #a565cd;
-    color: #fff;
+    background-color: var(--accentViolet);
+    color: var(--white);
     border: 0;
 
     svg {
@@ -338,8 +338,8 @@
     }
 
     @include darkTheme {
-      color: #fff;
-      background-color: #a565cd;
+      color: var(--white);
+      background-color: var(--accentViolet);
     }
 
     @include breakpoint(mobile) {
@@ -394,7 +394,7 @@
 
       svg {
         position: absolute;
-        stroke: #acacac;
+        stroke: var(--grey65);
         left: 14px;
         pointer-events: none;
       }
@@ -547,7 +547,7 @@
     }
 
     &.highlighted {
-      outline-color: #be8ddc;
+      outline-color: var(--accentViolet);
       transition-duration: 0s;
     }
 
@@ -602,11 +602,11 @@
 
     .nameMatch {
       opacity: 1;
-      background-color: #d8acf3;
+      background-color: var(--accentVioletLightTheme);
       border-radius: 2px;
 
       @include darkTheme {
-        background-color: #772fa3;
+        background-color: var(--accentVioletDarkTheme);
       }
     }
   }
@@ -623,7 +623,7 @@
 
   .itemUpdate {
     margin-left: auto;
-    color: #0ccb93;
+    color: var(--btn-green);
     text-transform: uppercase;
     font-size: 13px;
     font-weight: 500;
@@ -636,8 +636,8 @@
   }
 
   .itemValue {
-    --select-option-color: #4c4c4c;
-    --svg-color: #7d7d7d;
+    --select-option-color: var(--grey25);
+    --svg-color: var(--grey45);
     grid-area: value;
     display: flex;
     align-items: center;
@@ -645,7 +645,7 @@
     min-width: 0;
 
     @include darkTheme {
-      --select-option-color: #adadad;
+      --select-option-color: var(--grey65);
     }
 
     &.noOverflow {
@@ -656,7 +656,7 @@
 
   .setNullButton {
     cursor: pointer;
-    background-color: #fafafa;
+    background-color: var(--grey97);
     padding: 0 6px;
     margin-left: 8px;
     line-height: 32px;
@@ -668,7 +668,7 @@
     }
 
     @include darkTheme {
-      background-color: #141414;
+      background-color: var(--app-bg);
     }
   }
 

@@ -2,7 +2,7 @@
 
 .themeSwitcher {
   position: relative;
-  color: #b3b3b3;
+  color: var(--grey70);
 
   $iconSize: 32px;
   $iconSpacing: 6px;
@@ -65,7 +65,7 @@
       color: var(--accentGreen);
 
       @include breakpoint(mobile) {
-        background-color: #fff;
+        background-color: var(--white);
         color: var(--baseText);
 
         @include darkTheme {
@@ -93,7 +93,7 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    background-color: #fff;
+    background-color: var(--white);
     height: $iconSize;
     width: $iconSize;
     border-radius: 16px;
@@ -106,7 +106,7 @@
       height 0.133s 0.066s cubic-bezier(0.76, 0, 0.78, 0.9), opacity 0s 0.3s;
 
     @include darkTheme {
-      background-color: #212121;
+      background-color: var(--grey10);
     }
 
     .button {
@@ -213,8 +213,8 @@
     line-height: 32px;
     padding: 0 10px;
     border-radius: 4px;
-    background: #4c4c4c;
-    color: #f5f5f5;
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text);
     font-weight: 600;
     font-size: 14px;
     top: calc(100% + 10px);
@@ -235,8 +235,8 @@
     }
 
     @include darkTheme {
-      background: #adadad;
-      color: #141414;
+      background: var(--tooltip-bg);
+      color: var(--tooltip-text);
     }
 
     @include breakpoint(mobile) {

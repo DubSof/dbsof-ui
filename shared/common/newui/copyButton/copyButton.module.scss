@@ -6,7 +6,7 @@
   }
 
   &.copied svg {
-    color: #70b53a !important;
+    color: var(--syntax-green) !important;
   }
 
   @include darkTheme {
@@ -27,9 +27,9 @@
     color: var(--Grey55, #8c8c8c);
   }
 
-  &.copied {
-    color: #70b53a !important;
-  }
+    &.copied {
+      color: var(--syntax-green) !important;
+    }
 
   @include darkTheme {
     color: var(--Grey30, #4d4d4d);

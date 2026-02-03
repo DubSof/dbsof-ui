@@ -6,11 +6,11 @@
   display: flex;
   align-items: center;
   border-radius: 4px;
-  color: var(--select-option-color, #6b6b6b);
+  color: var(--select-option-color, var(--font-inactive-gray));
   cursor: pointer;
 
   svg {
-    color: var(--svg-color, --select-option-color, #6b6b6b);
+    color: var(--svg-color, var(--select-option-color, var(--font-inactive-gray)));
     flex-shrink: 0;
   }
 
@@ -98,15 +98,15 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: #fff;
-      color: #999;
+      background: var(--app-modal-bg);
+      color: var(--font-inactive-gray);
       font-family: Roboto;
       font-size: 18px;
       font-weight: 600;
       line-height: 24px;
 
       .dropdownTitle {
-        color: #1a1a1a;
+        color: var(--baseText);
         text-align: center;
         font-family: Roboto;
         font-size: 20px;
@@ -117,18 +117,18 @@
       .closeDropdown {
         background: transparent;
         border: none;
-        color: #737373;
+        color: var(--grey45);
         position: absolute;
         top: 23px;
         right: 18px;
       }
 
       @include darkTheme {
-        background: #2e2e2e;
-        border-color: #141414;
+        background: var(--grey18);
+        border-color: var(--app-bg);
 
         .dropdownTitle {
-          color: #b9b9b9;
+          color: var(--baseText);
         }
       }
     }
@@ -140,7 +140,7 @@
   border-radius: 3px;
   padding: 6px 8px;
   margin: 6px;
-  background: #f2f2f2;
+  background: var(--app-bg);
 
   .searchInput {
     flex-grow: 1;
@@ -152,7 +152,7 @@
   }
 
   @include darkTheme {
-    background: #1f1f1f;
+    background: var(--grey12);
   }
 }
 
@@ -174,14 +174,14 @@
       outline: 0;
       border: 0;
       border-radius: 6px;
-      background: #f2f2f2;
+      background: var(--app-bg);
       padding: 12px 14px 12px 38px;
       font-weight: 600;
-      color: #7c7c7c;
+      color: var(--grey45);
       width: calc(100% - 48px);
 
       @include darkTheme {
-        background: #141414;
+        background: var(--app-bg);
       }
     }
   }
@@ -203,7 +203,7 @@
 
   &.dropdownItemHighlighted {
     background: var(--app-accent-green);
-    color: #fff;
+    color: var(--white);
 
     * {
       color: inherit;
@@ -224,18 +224,18 @@
   }
 
   .searchHighlight {
-    background: #1f8aed;
+    background: var(--syntax-blue);
     border-radius: 2px;
-    color: #fff;
+    color: var(--white);
   }
 
   @include breakpoint(mobile) {
     &.fullScreen {
       padding: 24px 16px 24px;
-      border-top: 2px solid #d9d9d9;
+      border-top: 2px solid var(--grey85);
 
       @include darkTheme {
-        border-color: #141414;
+        border-color: var(--app-bg);
       }
     }
   }
@@ -271,12 +271,12 @@
   border-width: 1px;
   border-radius: 4px;
   gap: 0.25rem;
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--grey85);
   background: var(--form-field-bg);
   opacity: 0.8;
 
   @include darkTheme {
-    border-color: #141414;
+    border-color: var(--app-bg);
   }
 
   .modifier {

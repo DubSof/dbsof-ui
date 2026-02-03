@@ -21,6 +21,10 @@ import {Header} from "./components/header";
 import Main from "./components/main";
 import LoginPage from "./components/loginPage";
 
+// Initialize auth module early - this ensures authentication state is ready
+// before any components try to use it
+import "@dbsof/auth";
+
 function App() {
   return (
     <appContext.Provider value={appState}>

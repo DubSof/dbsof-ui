@@ -4,11 +4,11 @@
   position: relative;
   z-index: 110;
   --buttonBg: var(--Grey99);
-  --buttonTextColour: #5e5e5e;
+  --buttonTextColour: var(--grey35);
 
   @include darkTheme {
-    --buttonBg: #2f2f2f;
-    --buttonTextColour: #cdcdcd;
+    --buttonBg: var(--grey20);
+    --buttonTextColour: var(--grey80);
   }
 }
 
@@ -24,7 +24,7 @@
 
 .popup {
   position: absolute;
-  background: #fff;
+  background: var(--white);
   border-radius: 1rem;
   bottom: calc(100% + 10px);
   left: 50%;
@@ -46,7 +46,7 @@
   }
 
   @include darkTheme {
-    background: #313131;
+    background: var(--grey20);
   }
 }
 

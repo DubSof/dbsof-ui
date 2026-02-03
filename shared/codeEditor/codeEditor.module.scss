@@ -57,7 +57,7 @@
   }
 
   .explainContextSnippet {
-    background: #e1e1e1;
+    background: var(--grey90);
     border-radius: 4px;
     padding: 2px 1px;
     font-style: italic;
@@ -67,7 +67,7 @@
     }
 
     @include darkTheme {
-      background: #3a3a3a;
+      background: var(--grey22);
     }
   }
 }

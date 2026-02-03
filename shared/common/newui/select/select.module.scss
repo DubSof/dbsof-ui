@@ -3,8 +3,8 @@
 .select {
   font-family: "Roboto Flex Variable", "Roboto", sans-serif;
   line-height: 24px;
-  border: 1px solid #e1e1e1;
-  background: #fff;
+  border: 1px solid var(--grey90);
+  background: var(--white);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
   padding: 8px 16px;
   border-radius: 6px !important;
@@ -12,9 +12,9 @@
   font-size: 14px;
 
   @include darkTheme {
-    border: 1px solid #4d4d4d;
-    background: #363636;
-    color: #ccc;
+    border: 1px solid var(--grey30);
+    background: var(--grey22);
+    color: var(--grey80);
   }
 }
 
@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  color: #4d4d4d;
+  color: var(--app-text-colour);
 
   .fieldHeader {
     display: flex;
@@ -36,6 +36,6 @@
   }
 
   @include darkTheme {
-    color: #ccc;
+    color: var(--grey80);
   }
 }

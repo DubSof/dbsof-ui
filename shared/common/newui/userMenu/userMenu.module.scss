@@ -57,8 +57,8 @@
   position: relative;
 
   @include darkTheme {
-    --main_text_color: #ccc;
-    --tertiary_text_color: #999;
+    --main_text_color: var(--grey80);
+    --tertiary_text_color: var(--grey60);
   }
 }
 
@@ -130,7 +130,7 @@
 
   > svg {
     height: 20px;
-    color: #808080;
+    color: var(--font-inactive-gray);
     flex-shrink: 0;
   }
 

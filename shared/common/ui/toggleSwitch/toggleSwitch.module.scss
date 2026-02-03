@@ -29,7 +29,7 @@
   height: calc(var(--switchSize, 18px) - 2px);
   border-radius: var(--switchSize, 18px);
   margin: 1px;
-  background: #fff;
+  background: var(--white);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.18);
   transition: transform 0.2s, background-color 0.2s;
 
@@ -40,6 +40,6 @@
 
   .checked & {
     transform: translateX(calc(var(--switchSize, 18px) - 8px));
-    background: #a565cd;
+    background: var(--accentViolet);
   }
 }

@@ -18,8 +18,8 @@
   }
 }
 .beta {
-  fill: #08b985;
+  fill: var(--app-accent-green);
   @include darkTheme {
-    fill: #358b6c;
+    fill: var(--app-accent-green);
   }
 }

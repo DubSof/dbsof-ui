@@ -158,3 +158,32 @@
     }
   }
 }
+
+.documentationSection {
+  margin-top: 8px;
+  padding: 16px;
+  background: var(--app-panel-bg);
+  border: 1px solid var(--app-card-outline);
+  border-radius: 8px;
+
+  @include darkTheme {
+    background: var(--app-card-bg);
+  }
+}
+
+.documentationLink {
+  display: inline-block;
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.documentationDescription {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: var(--font-inactive-gray);
+  line-height: 1.5;
+
+  @include darkTheme {
+    color: var(--font-active-gray);
+  }
+}

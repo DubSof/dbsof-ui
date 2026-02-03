@@ -13,6 +13,7 @@
     "test": "playwright test"
   },
   "dependencies": {
+    "@dbsof/auth": "workspace:*",
     "@dbsof/code-editor": "workspace:*",
     "@dbsof/common": "workspace:*",
     "@dbsof/platform": "workspace:*",

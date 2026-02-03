@@ -1,0 +1,240 @@
+@import "@dbsof/common/mixins.scss";
+
+.documentationPage {
+  flex-grow: 1;
+  overflow: hidden;
+  background: var(--app-bg);
+  height: 100%;
+  display: flex;
+}
+
+.scrollableContent {
+  flex: 1;
+  overflow: auto;
+  @include hideScrollbar;
+}
+
+.contentInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  color: var(--app-text-colour);
+  line-height: 1.6;
+
+  @include isMobile {
+    padding: 16px;
+  }
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 32px 0;
+  color: var(--app-text-colour);
+  border-bottom: 2px solid var(--app-card-outline);
+  padding-bottom: 16px;
+
+  @include darkTheme {
+    color: var(--app-text-colour);
+  }
+}
+
+.tableOfContents {
+  background: var(--app-panel-bg);
+  border: 1px solid var(--app-card-outline);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 32px;
+
+  @include darkTheme {
+    background: var(--app-card-bg);
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: var(--app-text-colour);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin: 8px 0;
+
+      a {
+        color: var(--btn-green);
+        text-decoration: none;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: var(--app-accent-green);
+          text-decoration: underline;
+        }
+      }
+
+      ul {
+        margin-left: 20px;
+        margin-top: 4px;
+
+        li {
+          margin: 4px 0;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+.section {
+  margin-bottom: 48px;
+
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: var(--app-text-colour);
+    padding-top: 16px;
+    border-top: 2px solid var(--app-card-outline);
+    margin-top: 32px;
+
+    &:first-of-type {
+      border-top: none;
+      margin-top: 0;
+      padding-top: 0;
+    }
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 24px 0 12px 0;
+    color: var(--app-text-colour);
+  }
+
+  h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 20px 0 8px 0;
+    color: var(--app-text-colour);
+  }
+
+  p {
+    margin: 12px 0;
+    color: var(--app-text-colour);
+  }
+
+  ul, ol {
+    margin: 12px 0;
+    padding-left: 24px;
+    color: var(--app-text-colour);
+
+    li {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+  }
+
+  code {
+    font-family: "Roboto Mono", monospace;
+    font-size: 0.9em;
+  }
+}
+
+.subsection {
+  margin-bottom: 32px;
+  padding-left: 16px;
+  border-left: 3px solid var(--app-card-outline);
+
+  @include darkTheme {
+    border-left-color: var(--app-card-outline);
+  }
+}
+
+.inlineCode {
+  display: inline;
+  background: var(--app-card-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.9em;
+  color: var(--syntax-blue);
+  border: 1px solid var(--app-card-outline);
+
+  @include darkTheme {
+    background: var(--app-panel-bg);
+    color: var(--syntax-blue);
+  }
+}
+
+.diagram {
+  background: var(--app-panel-bg);
+  border: 1px solid var(--app-card-outline);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+
+  @include darkTheme {
+    background: var(--app-card-bg);
+  }
+
+  pre {
+    margin: 0;
+    font-family: "Roboto Mono", monospace;
+    font-size: 14px;
+    color: var(--app-text-colour);
+    white-space: pre;
+  }
+}
+
+.footer {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 2px solid var(--app-card-outline);
+  text-align: center;
+  color: var(--font-inactive-gray);
+
+  p {
+    margin: 8px 0;
+  }
+
+  a {
+    color: var(--btn-green);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      color: var(--app-accent-green);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Code block styling
+:global(pre) {
+  background: var(--app-panel-bg);
+  border: 1px solid var(--app-card-outline);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+  font-family: "Roboto Mono", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+
+  @include darkTheme {
+    background: var(--app-card-bg);
+  }
+}
+
+// Ensure code blocks have proper styling
+:global(pre code) {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: var(--app-code);
+}

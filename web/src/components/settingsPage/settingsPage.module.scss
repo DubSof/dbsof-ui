@@ -1,13 +1,27 @@
 @import "@dbsof/common/mixins.scss";
 
 .settingsPage {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  color: var(--Grey15);
+  flex-grow: 1;
+  overflow: hidden;
+  background: var(--app-bg);
+  height: 100%;
+  display: flex;
+}
 
-  @include darkTheme {
-    color: var(--Grey85);
+.scrollableContent {
+  flex: 1;
+  overflow: auto;
+  @include hideScrollbar;
+}
+
+.content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  color: var(--app-text-colour);
+
+  @include isMobile {
+    padding: 16px;
   }
 }
 
@@ -15,90 +29,93 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--app-card-outline);
 
   h1 {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
     margin: 0;
-  }
-}
-
-.backButton {
-  padding: 8px 16px;
-  background: var(--Grey95);
-  border: 1px solid var(--Grey85);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--Grey15);
-
-  @include darkTheme {
-    background: var(--Grey15);
-    border-color: var(--Grey25);
-    color: var(--Grey85);
-  }
-
-  &:hover {
-    background: var(--Grey90);
-
-    @include darkTheme {
-      background: var(--Grey20);
-    }
+    color: var(--app-text-colour);
   }
 }
 
 .loading {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   padding: 40px;
   font-size: 16px;
-  color: #666;
+  color: var(--font-inactive-gray);
+  min-height: 200px;
 }
 
 .error {
   padding: 12px 16px;
-  background: #fee;
-  border: 1px solid #fcc;
-  border-radius: 4px;
-  color: #c33;
+  background: var(--error-bg-light);
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  color: var(--error-text-light);
   margin-bottom: 20px;
+  font-size: 14px;
+
+  @include darkTheme {
+    background: var(--error-bg-dark);
+    color: var(--error-text-dark);
+  }
 }
 
 .success {
   padding: 12px 16px;
-  background: #efe;
-  border: 1px solid #cfc;
-  border-radius: 4px;
-  color: #3c3;
+  background: var(--btn-green);
+  background: rgba(12, 203, 147, 0.1);
+  border: 1px solid var(--btn-green);
+  border-radius: 8px;
+  color: var(--btn-green);
   margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+
+  @include darkTheme {
+    background: rgba(41, 177, 137, 0.15);
+    border-color: var(--btn-green);
+    color: var(--btn-green);
+  }
 }
 
 .settingsForm {
-  background: var(--Grey100);
-  border: 1px solid var(--Grey85);
-  border-radius: 8px;
+  background: var(--app-panel-bg);
+  border: 1px solid var(--app-card-outline);
+  border-radius: 12px;
   padding: 24px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.04), 0 0 4px rgba(0, 0, 0, 0.06);
 
   @include darkTheme {
-    background: var(--Grey10);
-    border-color: var(--Grey20);
+    background: var(--app-panel-bg);
+    border-color: var(--app-card-outline);
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.2),
+      0px 0px 4px 0px rgba(0, 0, 0, 0.3);
   }
 }
 
 .empty {
   text-align: center;
   padding: 40px;
-  color: #999;
+  color: var(--font-inactive-gray);
+  font-style: italic;
 }
 
 .settingRow {
   display: flex;
-  align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--Grey90);
+  align-items: flex-start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--app-card-outline);
 
   @include darkTheme {
-    border-bottom-color: var(--Grey20);
+    border-bottom-color: var(--app-card-outline);
   }
 
   &:last-child {
@@ -110,80 +127,23 @@
   flex: 0 0 200px;
   font-weight: 500;
   font-size: 14px;
-  color: var(--Grey20);
+  color: var(--app-text-colour);
+  padding-top: 8px;
 
   @include darkTheme {
-    color: var(--Grey80);
+    color: var(--btn-text-color);
   }
 }
 
 .settingInput {
   flex: 1;
-
-  input[type="text"],
-  input[type="number"] {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--Grey85);
-    border-radius: 4px;
-    font-size: 14px;
-    background: var(--Grey98);
-    color: var(--Grey15);
-
-    @include darkTheme {
-      background: var(--Grey15);
-      border-color: var(--Grey25);
-      color: var(--Grey85);
-    }
-
-    &:focus {
-      outline: none;
-      border-color: #4a9eff;
-    }
-  }
-}
-
-.checkbox {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-
-  input[type="checkbox"] {
-    margin-right: 8px;
-  }
-
-  span {
-    font-size: 14px;
-    color: var(--Grey40);
-
-    @include darkTheme {
-      color: var(--Grey60);
-    }
-  }
+  min-width: 0;
 }
 
 .actions {
-  margin-top: 24px;
+  margin-top: 32px;
   display: flex;
   justify-content: flex-end;
-}
-
-.saveButton {
-  padding: 12px 24px;
-  background: #4a9eff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    background: #3a8eef;
-  }
-
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
+  padding-top: 24px;
+  border-top: 2px solid var(--app-card-outline);
 }

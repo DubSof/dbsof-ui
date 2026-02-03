@@ -8,11 +8,11 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  transition: opacity 0s, width 0.2s;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width;
 
   &.expanded {
-    // TODO: find a workaround to animating to auto
-    width: 140px;
+    width: 180px;
   }
 }
 
@@ -23,8 +23,8 @@
   margin-bottom: 4px;
   text-decoration: none;
   color: inherit;
-
   cursor: pointer;
+  transition: background-color 0.2s ease;
 
   .tabInner {
     display: flex;
@@ -39,14 +39,20 @@
     align-items: center;
     justify-content: center;
     width: 40px;
+    transition: transform 0.2s ease;
 
     & > svg {
-      fill: #999;
+      fill: var(--font-inactive-gray);
+      transition: fill 0.2s ease;
     }
   }
 
   &.tabSelected {
     background: var(--app-panel-bg);
+
+    .icon > svg {
+      fill: var(--btn-green);
+    }
   }
 
   &:hover {
@@ -62,18 +68,24 @@
   flex-shrink: 0;
   font-weight: 500;
   font-size: 14px;
-  color: #4d4d4d;
-  padding-right: 8px;
+  color: var(--app-text-colour);
+  padding-left: 4px;
+  padding-right: 12px;
+  white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.1s;
+  transform: translateX(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
 
   .expanded & {
     opacity: 1;
-    transition-delay: 0.05s;
+    transform: translateX(0);
+    transition-delay: 0.1s;
+    pointer-events: auto;
   }
 
   @include darkTheme {
-    color: #adadad;
+    color: var(--btn-text-color);
   }
 }
 
@@ -84,8 +96,8 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.1s;
-  background: #4c4c4c;
-  color: #f5f5f5;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
   white-space: nowrap;
   padding: 4px 10px;
   border-radius: 4px;
@@ -106,8 +118,8 @@
   }
 
   @include darkTheme {
-    background: #adadad;
-    color: #141414;
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text);
   }
 }
 
@@ -131,11 +143,11 @@
     border-radius: 5px;
     animation: blink 1s infinite alternate-reverse;
 
-    --blinkFromColour: #0ccb93;
-    --blinkToColour: #d0f9ed;
+    --blinkFromColour: var(--loading-indicator-from);
+    --blinkToColour: var(--loading-indicator-to-light);
 
     @include darkTheme {
-      --blinkToColour: #1f1f1f;
+      --blinkToColour: var(--loading-indicator-to-dark);
     }
   }
 
@@ -184,10 +196,12 @@
   width: 15px;
   height: 15px;
   fill: none;
-  stroke: #999;
+  stroke: var(--font-inactive-gray);
   stroke-width: 1.5px;
   stroke-linecap: round;
   stroke-linejoin: round;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
 
   .expanded & {
     transform: scaleX(-1);

@@ -1,5 +1,6 @@
 import {useEffect, useMemo} from "react";
 import {observer} from "mobx-react-lite";
+import {Link} from "react-router-dom";
 
 import styles from "./databaseDashboard.module.scss";
 
@@ -8,7 +9,7 @@ import {useDatabaseState} from "../../state/database";
 import {DatabaseTabSpec} from "../../components/databasePage";
 import {useDBRouter} from "../../hooks/dbRoute";
 
-import {DocsQuickstartIcon, DocsIcon} from "../../icons/docs";
+import {DocsIcon} from "../../icons/docs";
 
 import {ArrowRightIcon, Button} from "@dbsof/common/newui";
 import {CustomScrollbars} from "@dbsof/common/ui/customScrollbar";
@@ -122,15 +123,10 @@ export const DatabaseDashboard = observer(function DatabaseDashboard() {
           </div>
 
           <div className={styles.docButtons}>
-            <a href="https://example.com/docs/quickstart">
-              <DocsQuickstartIcon />
-              <span>5-min Quickstart</span>
-            </a>
-
-            <a href="https://example.com/docs" target="_blank">
+            <Link to="/docs">
               <DocsIcon />
               <span>Documentation</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

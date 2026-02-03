@@ -92,9 +92,9 @@
   @include darkTheme {
     --app_panel_background: var(--Grey14, #242424);
     border-color: var(--Grey22, #363636);
-    --main_text_color: #ccc;
-    --secondary_text_color: #b3b3b3;
-    --tertiary_text_colour: #999;
+    --main_text_color: var(--grey80);
+    --secondary_text_color: var(--grey70);
+    --tertiary_text_colour: var(--grey60);
   }
 }
 
@@ -191,12 +191,12 @@
 .formError {
   display: flex;
   padding: 12px 16px;
-  border-top: 1px solid #e55e5e;
-  border-bottom: 1px solid #e55e5e;
-  background: #fce3e3;
+  border-top: 1px solid var(--error-border);
+  border-bottom: 1px solid var(--error-border);
+  background: var(--error-bg-light);
   margin-bottom: -1px;
   z-index: 1;
-  color: #e55e5e;
+  color: var(--error-color);
   font-size: 14px;
   font-style: normal;
   font-weight: 450;
@@ -222,8 +222,8 @@
   }
 
   @include darkTheme {
-    border-color: #b24c4c;
-    background: #4c2323;
-    color: #e06b6b;
+    border-color: var(--error-border);
+    background: var(--error-bg-dark);
+    color: var(--error-color);
   }
 }

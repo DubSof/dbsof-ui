@@ -13,6 +13,7 @@ import headerNavStyles from "@dbsof/studio/components/headerNav/headerNav.module
 import {InstancePage} from "../instancePage";
 import {DatabasePage} from "../databasePage";
 import {SettingsPage} from "../settingsPage";
+import DocumentationPage from "../documentationPage";
 
 const Main = observer(function Main() {
   const appState = useAppState();
@@ -49,6 +50,10 @@ const Main = observer(function Main() {
         {
           path: "settings",
           element: <SettingsPage />,
+        },
+        {
+          path: "docs",
+          element: <DocumentationPage />,
         },
         {
           path: ":databaseName/*",

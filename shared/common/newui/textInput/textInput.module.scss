@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  color: #4d4d4d;
+  color: var(--app-text-colour);
 
   .inputWrapper {
     position: relative;
@@ -15,8 +15,8 @@
   .hasError {
     input,
     textarea {
-      outline: 1px solid #df594c;
-      border-color: #df594c !important;
+      outline: 1px solid var(--error-border);
+      border-color: var(--error-border) !important;
       padding-right: 36px;
     }
   }
@@ -38,7 +38,7 @@
     align-self: stretch;
     border-radius: 6px;
     border: 1px solid var(--Grey90, #e6e6e6);
-    background: #fff;
+    background: var(--white);
     padding: var(--textInputVPadding, 9px) 12px;
     font-family: "Roboto Mono Variable", monospace;
     font-size: 14px;
@@ -50,7 +50,7 @@
     flex-grow: 1;
 
     &:read-only {
-      background: #f7f7f7;
+      background: var(--grey97);
       outline: none;
     }
 
@@ -69,7 +69,7 @@
     box-sizing: border-box;
     right: 0;
     top: 0;
-    color: #df594c;
+    color: var(--error-color);
 
     div {
       position: absolute;
@@ -78,14 +78,14 @@
       right: 6px;
       width: max-content;
       max-width: 300px;
-      color: #bb3225;
+      color: var(--error-color);
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
       padding: 8px 12px;
       border-radius: 6px;
-      border: 1px solid rgba(223, 89, 76, 0.3);
+      border: 1px solid var(--error-border);
       opacity: 0;
       transition: opacity 0.1s;
       z-index: 1;
@@ -97,22 +97,22 @@
   }
 
   @include darkTheme {
-    color: #ccc;
+    color: var(--grey80);
 
     input,
     textarea {
-      border: 1px solid #4d4d4d;
-      background: #363636;
+      border: 1px solid var(--grey30);
+      background: var(--grey22);
 
       &:read-only {
-        background: #464646;
+        background: var(--grey25);
       }
     }
 
     .error {
       div {
         background: rgba(50, 50, 50, 0.85);
-        color: #df594c;
+        color: var(--error-color);
       }
     }
   }

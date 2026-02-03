@@ -12,7 +12,7 @@ import {TabSettingsIcon} from "@dbsof/studio/icons";
 import {LogoLocal} from "@dbsof/common/ui/icons/logo";
 
 import appState from "../../state/store";
-import {clearAuthToken} from "../../state/models/app";
+import {auth} from "@dbsof/auth";
 
 import styles from "./header.module.scss";
 
@@ -25,7 +25,7 @@ export const Logo = ({className}: {className?: string}) => {
 };
 
 export const Header = observer(function Header() {
-  const username = appState.instanceState._authProvider.getAuthUser?.();
+  const username = auth.getCurrentUsername();
 
   return (
     <div className={styles.header}>
@@ -49,7 +49,7 @@ export const Header = observer(function Header() {
             )
           }
           name={username ?? "admin"}
-          signout={{action: () => clearAuthToken()}}
+          signout={{action: () => auth.logout()}}
         />
       </div>
     </div>
