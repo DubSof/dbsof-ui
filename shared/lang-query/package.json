@@ -1,0 +1,19 @@
+{
+  "name": "@dbsof/lang-query",
+  "private": true,
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "main": "./query.ts",
+  "type": "module",
+  "scripts": {
+    "generate": "lezer-generator lang.grammar -o lang.js",
+    "debug": "node debug.js",
+    "genMeta": "node genMeta.js"
+  },
+  "dependencies": {
+    "@lezer/highlight": "^1.2.0"
+  },
+  "devDependencies": {
+    "@lezer/generator": "^1.7.0"
+  }
+}
