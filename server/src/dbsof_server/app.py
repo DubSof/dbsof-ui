@@ -9,7 +9,6 @@ from .blueprints.schema import bp as schema_bp
 from .blueprints.ai import bp as ai_bp
 from .blueprints.imports import bp as imports_bp
 
-
 def create_app() -> Flask:
     app = Flask(__name__)
     CORS(app)

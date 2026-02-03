@@ -1,8 +1,16 @@
 import {test as base, type Locator} from "@playwright/test";
-import {type Client, createClient} from "@dbsof/platform/client";
+
+const FLASK_SERVER_URL = "http://localhost:5757";
+
+type FlaskApiClient = {
+  get: (path: string) => Promise<Response>;
+  post: (path: string, body?: any) => Promise<Response>;
+  instanceId: string;
+  db: string;
+};
 
 type Fixtures = {
-  apiClient: Client;
+  flaskApi: FlaskApiClient;
   uiClass: (className: string) => Locator;
   mockClipboard: {
     getClipboardData: () => string;
@@ -10,8 +18,24 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  apiClient: ({}, use) => {
-    use(createClient({port: 5656, tlsSecurity: "insecure", branch: "_test"}));
+  flaskApi: ({}, use) => {
+    const client: FlaskApiClient = {
+      instanceId: "demo",
+      db: "main",
+      async get(path: string) {
+        const url = `${FLASK_SERVER_URL}${path}`;
+        return fetch(url);
+      },
+      async post(path: string, body?: any) {
+        const url = `${FLASK_SERVER_URL}${path}`;
+        return fetch(url, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: body ? JSON.stringify(body) : undefined,
+        });
+      },
+    };
+    use(client);
   },
   uiClass: ({page}, use) => {
     use((className: string) => page.locator(`[class*=${className}__]`));
