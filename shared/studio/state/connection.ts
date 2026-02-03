@@ -23,6 +23,7 @@ export const connCtx = createContext<Connection>();
 export interface ConnectConfig {
   serverUrl: string;
   database: string;
+  instanceId?: string;
   authProvider: AuthProvider;
 }
 
@@ -197,8 +198,9 @@ export class Connection {
 
     // simple REST bridge to dev API
     const baseUrl = this.config.serverUrl || "http://localhost:5757";
+    const instanceId = this.config.instanceId || "default";
     const url = new URL(
-      `/instances/default/databases/${encodeURIComponent(
+      `/instances/${encodeURIComponent(instanceId)}/databases/${encodeURIComponent(
         this.config.database
       )}/sql/commands`,
       baseUrl
@@ -223,8 +225,13 @@ export class Connection {
     }
 
     const data = await response.json();
-    const rows = Array.isArray(data.rows) ? data.rows : [];
+    const rawRows = Array.isArray(data.rows) ? data.rows : [];
     const columns = Array.isArray(data.columns) ? data.columns : [];
+    const rows = rawRows.map((row: any) =>
+      Array.isArray(row)
+        ? Object.fromEntries(columns.map((col, i) => [col, row[i]]))
+        : row || {}
+    );
     const codec = buildObjectCodec(columns);
     const result: any = rows as any[];
     (result as any)._codec = codec;

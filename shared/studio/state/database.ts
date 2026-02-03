@@ -19,11 +19,6 @@ import {
 } from "mobx-keystone";
 
 import {
-  RawIntrospectionResult,
-  getIntrospectionQuery,
-} from "@dbsof/common/schemaData/queries";
-import {
-  buildTypesGraph,
   SchemaType,
   SchemaObjectType,
   SchemaScalarType,
@@ -35,25 +30,21 @@ import {
   SchemaAlias,
   SchemaGlobal,
   SchemaOperator,
+  SchemaLink,
+  SchemaProperty,
 } from "@dbsof/common/schemaData";
-import {SchemaVersion} from "@dbsof/common/schemaData/utils";
-
-import {fetchSchemaData, storeSchemaData} from "../idbStore";
 
 import {instanceCtx} from "./instance";
 import {Capabilities, connCtx, Connection} from "./connection";
 import {SessionState, sessionStateCtx} from "./sessionState";
-import {AuthenticationError, mockMode} from "@dbsof/platform/client";
 
 export const dbCtx = createMobxContext<DatabaseState>();
-
-const SCHEMA_DATA_VERSION = 8;
 
 export interface StoredSchemaData {
   version: number;
   schemaId: string | null;
   schemaLastMigration: string | null | undefined;
-  data: RawIntrospectionResult;
+  data: any;
 }
 
 export interface SchemaData {
@@ -254,7 +245,16 @@ export class DatabaseState extends Model({
         )
       );
       const schemaJson: {
-        types: {name: string; columns?: {name: string; type: string; nullable: boolean; default: string | null}[]}[];
+        types: {
+          name: string;
+          columns?: {
+            name: string;
+            type: string;
+            nullable: boolean;
+            default: string | null;
+            references?: {table: string; column: string} | null;
+          }[];
+        }[];
         version: string;
       } = yield* _await(res.json());
 
@@ -281,10 +281,16 @@ export class DatabaseState extends Model({
 
       const objects = new Map<string, SchemaObjectType>();
       const objectsByName = new Map<string, SchemaObjectType>();
+      const pointers = new Map<string, SchemaPointer>();
+      const pendingLinks: {
+        targetName: string;
+        link: SchemaLink;
+      }[] = [];
 
       for (const t of schemaJson.types ?? []) {
         const properties: {[name: string]: SchemaProperty} = {};
-        const pointers: SchemaProperty[] = [];
+        const links: {[name: string]: SchemaLink} = {};
+        const objPointers: SchemaPointer[] = [];
         for (const col of t.columns ?? []) {
           const prop: SchemaProperty = {
             schemaType: "Pointer",
@@ -310,9 +316,48 @@ export class DatabaseState extends Model({
             rewrites: [],
             isDeprecated: false,
             bases: [],
+            source: null,
           };
           properties[col.name] = prop;
-          pointers.push(prop);
+          objPointers.push(prop);
+          pointers.set(prop.id, prop);
+
+          if (col.references) {
+            const linkName = col.name.replace(/_id$/, "") || col.name;
+            const link: SchemaLink = {
+              schemaType: "Pointer",
+              type: "Link",
+              id: `${t.name}::${linkName}`,
+              name: linkName,
+              escapedName: linkName,
+              module: "default",
+              shortName: linkName,
+              abstract: false,
+              builtin: false,
+              "@owned": true,
+              target: null,
+              source: null,
+              required: !col.nullable,
+              readonly: false,
+              cardinality: "One",
+              default: col.default,
+              expr: col.name, // local FK column for nested queries
+              secret: false,
+              constraints: [],
+              annotations: [],
+              rewrites: [],
+              isDeprecated: false,
+              bases: [],
+              properties: {},
+              onTargetDelete: "Restrict",
+              onSourceDelete: "Allow",
+              indexes: [],
+            };
+            links[linkName] = link;
+            objPointers.push(link);
+            pointers.set(link.id, link);
+            pendingLinks.push({targetName: col.references.table, link});
+          }
         }
 
         const obj: SchemaObjectType = {
@@ -337,8 +382,8 @@ export class DatabaseState extends Model({
           insectionOf: null,
           unionOf: null,
           properties,
-          links: {},
-          pointers,
+          links,
+          pointers: objPointers,
           indexes: [],
           accessPolicies: [],
           triggers: [],
@@ -346,6 +391,57 @@ export class DatabaseState extends Model({
 
         objects.set(obj.id, obj);
         objectsByName.set(obj.name, obj);
+      }
+
+      // wire up link targets and sources now that all objects are known
+      for (const obj of objects.values()) {
+        for (const pointer of obj.pointers) {
+          pointer.source = obj;
+        }
+      }
+      for (const {link, targetName} of pendingLinks) {
+        const target = objectsByName.get(targetName);
+        if (target) {
+          link.target = target;
+          const sourceObj = link.source!;
+          const backLinkName = `ref_by_${sourceObj.shortName}_${link.name}`;
+          if (!target.links[backLinkName]) {
+            const backLink: SchemaLink = {
+              schemaType: "Pointer",
+              type: "Link",
+              id: `${target.name}::${backLinkName}`,
+              name: backLinkName,
+              escapedName: backLinkName,
+              module: "default",
+              shortName: backLinkName,
+              abstract: false,
+              builtin: false,
+              "@owned": true,
+              target: sourceObj,
+              source: target,
+              required: false,
+              readonly: false,
+              cardinality: "Many",
+              default: null,
+              expr: link.expr,
+              secret: false,
+              constraints: [],
+              annotations: [],
+              rewrites: [],
+              isDeprecated: false,
+              bases: [],
+              properties: {},
+              onTargetDelete: "Restrict",
+              onSourceDelete: "Allow",
+              indexes: [],
+            };
+            (backLink as any)._refSource = sourceObj.name;
+            (backLink as any)._refColumn = link.expr;
+            target.links[backLinkName] = backLink;
+            target.pointers.push(backLink);
+            pointers.set(backLink.id, backLink);
+          }
+        }
       }
 
       runInAction(() => {
@@ -358,8 +454,11 @@ export class DatabaseState extends Model({
           operators: new Map(),
           constraints: new Map(),
           scalars: new Map([[stringScalar.name, stringScalar]]),
-          types: new Map(),
-          pointers: new Map(),
+          types: new Map<string, SchemaType>([
+            [stringScalar.id, stringScalar],
+            ...[...objects.values()].map((obj) => [obj.id, obj]),
+          ]),
+          pointers,
           aliases: new Map(),
           globals: new Map(),
           annotations: new Map(),

@@ -356,7 +356,7 @@ function sliceVec(vec: Iterable<number>, length: number): number[] {
   return arr;
 }
 
-function strToString(value: string): string {
+function strToString(value: any): string {
   const escape = (str: string) => {
     const split = str.split(/(\n|\\\\|\\')/g);
     if (split.length === 1) {
@@ -375,7 +375,10 @@ function strToString(value: string): string {
     return ret.join("");
   };
 
-  return escape(value);
+  const safe =
+    value === null || value === undefined ? "" : typeof value === "string" ? value : String(value);
+
+  return escape(safe);
 }
 
 function toSingleLineStr(value: string, limit = 200): JSX.Element {

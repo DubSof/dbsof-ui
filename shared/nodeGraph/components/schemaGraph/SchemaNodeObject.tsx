@@ -13,6 +13,9 @@ export default observer(function SchemaNodeObject(props: ISchemaNodeProps) {
   const schemaState = useSchemaState();
 
   const object = schemaState.objects!.get(props.node.id)!;
+  const bgAnnot = object.annotations.find(
+    (a) => a.name === "@style::bgcolor" || a.name === "style::bgcolor"
+  );
 
   const isObjectSelected = schemaState.selectedObjectName === props.node.id;
 
@@ -72,6 +75,9 @@ export default observer(function SchemaNodeObject(props: ISchemaNodeProps) {
           e.stopPropagation();
         }}
         onAuxClick={() => schemaState.graph.centerOnNode(props.node.id)}
+        style={
+          bgAnnot?.["@value"] ? {background: bgAnnot["@value"]} : undefined
+        }
       >
         {schemaState.graph.showModuleNames ? (
           <span className={styles.moduleName}>

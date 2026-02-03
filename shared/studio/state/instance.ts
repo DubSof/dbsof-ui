@@ -256,6 +256,7 @@ export class InstanceState extends Model({
         {
           serverUrl: this.serverUrl,
           database: dbName,
+          instanceId: this.instanceId ?? "default",
           authProvider: {
             ...this._authProvider,
             getAuthUser: () =>
@@ -264,9 +265,7 @@ export class InstanceState extends Model({
               "default",
             getUserRole: () => this.userRole,
           },
-        },
-        this.serverVersion,
-        sessionState
+        }
       );
       if (!sessionState) {
         this._connections.set(dbName, conn);

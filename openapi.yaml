@@ -175,20 +175,20 @@ paths:
       - $ref: "#/components/parameters/Database"
     post:
       tags: [AI]
-      summary: Create an AI task from a prompt
+      summary: Create a new program build task (alias)
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AiTaskCreate"
+              $ref: "#/components/schemas/AiProgramCreate"
       responses:
         "202":
           description: Task accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AiTask"
+                $ref: "#/components/schemas/AiTaskWithProgram"
     get:
       tags: [AI]
       summary: List AI tasks
@@ -208,6 +208,55 @@ paths:
                 items:
                   $ref: "#/components/schemas/AiTask"
 
+  /instances/{instanceId}/databases/{database}/ai/programs:
+    parameters:
+      - $ref: "#/components/parameters/InstanceId"
+      - $ref: "#/components/parameters/Database"
+    post:
+      tags: [AI]
+      summary: Create a new program build request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiProgramCreate"
+      responses:
+        "202":
+          description: Program build accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiTaskWithProgram"
+    get:
+      tags: [AI]
+      summary: List programs
+      responses:
+        "200":
+          description: Programs for the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AiProgram"
+
+  /instances/{instanceId}/databases/{database}/ai/programs/{programId}:
+    parameters:
+      - $ref: "#/components/parameters/InstanceId"
+      - $ref: "#/components/parameters/Database"
+      - $ref: "#/components/parameters/ProgramId"
+    get:
+      tags: [AI]
+      summary: Get program details/graph
+      responses:
+        "200":
+          description: Program details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProgram"
+
   /instances/{instanceId}/databases/{database}/ai/tasks/{taskId}:
     parameters:
       - $ref: "#/components/parameters/InstanceId"
@@ -222,7 +271,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AiTask"
+                $ref: "#/components/schemas/AiTaskWithProgram"
 
 components:
   parameters:
@@ -239,6 +288,11 @@ components:
     Table:
       in: path
       name: table
+      required: true
+      schema: {type: string}
+    ProgramId:
+      in: path
+      name: programId
       required: true
       schema: {type: string}
     TaskId:
@@ -375,34 +429,62 @@ components:
         total:
           type: integer
           nullable: true
-    AiTaskCreate:
+    ProgramGraphNode:
       type: object
-      required: [prompt]
       properties:
-        prompt:
+        id: {type: string}
+        label: {type: string}
+        status: {type: string, enum: [pending, in-progress, done]}
+    ProgramGraphEdge:
+      type: object
+      properties:
+        from: {type: string}
+        to: {type: string}
+        label: {type: string}
+    ProgramGraph:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items: {$ref: "#/components/schemas/ProgramGraphNode"}
+        edges:
+          type: array
+          items: {$ref: "#/components/schemas/ProgramGraphEdge"}
+    AiProgramCreate:
+      type: object
+      required: [feature]
+      properties:
+        feature:
           type: string
-          description: User input or instruction
-        model:
+          description: User request / feature description
+        name:
           type: string
-        contextQuery:
-          type: string
-          description: Optional SQL to fetch context records
+          description: Optional friendly name
     AiTask:
       type: object
       properties:
         id: {type: string}
+        programId: {type: string}
         status:
           type: string
           enum: [pending, running, failed, completed]
         prompt: {type: string}
-        model: {type: string}
         createdAt: {type: string, format: date-time}
         completedAt: {type: string, format: date-time, nullable: true}
-        output:
-          type: array
-          description: Streamed messages or final output blocks
-          items:
-            type: object
-            properties:
-              role: {type: string, enum: [assistant, system]}
-              content: {type: string}
+    AiProgram:
+      type: object
+      properties:
+        id: {type: string}
+        feature: {type: string}
+        status: {type: string, enum: [building, ready, failed]}
+        createdAt: {type: string, format: date-time}
+        updatedAt: {type: string, format: date-time}
+        graph:
+          $ref: "#/components/schemas/ProgramGraph"
+    AiTaskWithProgram:
+      type: object
+      properties:
+        task:
+          $ref: "#/components/schemas/AiTask"
+        program:
+          $ref: "#/components/schemas/AiProgram"
