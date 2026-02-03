@@ -10,6 +10,7 @@ import {
   SubmitButton,
   TextInput,
 } from "@dbsof/common/newui";
+import {storeLocalStorageCacheItem} from "@dbsof/common/utils/localStorageCache";
 
 import {InstanceState} from "../../state/instance";
 
@@ -51,23 +52,36 @@ export default function CreateBranchModal({
   }, []);
 
   const onSubmit = handleSubmit(async ({branchName, fromBranch, copyData}) => {
+    setError("");
     try {
-      await instanceState.defaultConnection?.execute(
-        legacy
-          ? `create database \`${branchName}\``
-          : fromBranch != null
-          ? `create ${
-              copyData ? "data" : "schema"
-            } branch \`${branchName}\` from \`${fromBranch}\``
-          : `create empty branch \`${branchName}\``
-      );
+      const instanceId = instanceState.instanceId ?? "demo";
+      const url = `${instanceState.serverUrl}/instances/${encodeURIComponent(instanceId)}/databases`;
+      
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: branchName,
+          fromBranch: fromBranch || null,
+          copyData: copyData,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({error: "Failed to create database"}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to create database`);
+      }
+
+      await instanceState.fetchInstanceInfo();
+      // Clear branch graph cache to force refresh
+      storeLocalStorageCacheItem("branches-graph", instanceState.instanceId ?? "demo", null);
+      navigateToDB(branchName);
+      openModal(null);
     } catch (e) {
-      setError((e as any).toString());
-      return;
+      setError((e as any).message || (e as any).toString());
     }
-    await instanceState.fetchInstanceInfo();
-    navigateToDB(branchName);
-    openModal(null);
   });
 
   return (

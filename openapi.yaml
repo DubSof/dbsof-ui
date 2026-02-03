@@ -12,6 +12,8 @@ tags:
   - name: Schema
   - name: Data
   - name: AI
+  - name: Imports
+  - name: Users
 paths:
   /instances:
     get:
@@ -42,6 +44,142 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Database"
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Database"
+    post:
+      tags: [Instances]
+      summary: Create a new database (branch)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DatabaseCreate"
+      responses:
+        "201":
+          description: Database created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Database"
+        "400":
+          description: Invalid request (e.g., duplicate name, invalid name)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /instances/{instanceId}/databases/{database}/migrations:
+    parameters:
+      - $ref: "#/components/parameters/InstanceId"
+      - $ref: "#/components/parameters/Database"
+    get:
+      tags: [Instances]
+      summary: Get migration history for a database (branch)
+      responses:
+        "200":
+          description: Migration history for the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Migration"
+        "404":
+          description: Instance or database not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /users/{userId}/settings:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    get:
+      tags: [Users]
+      summary: Get user settings
+      description: Retrieve all settings for a specific user
+      responses:
+        "200":
+          description: User settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSettings"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    put:
+      tags: [Users]
+      summary: Update user settings
+      description: Update settings for a specific user. Merges with existing settings.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSettings"
+      responses:
+        "200":
+          description: Updated user settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSettings"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /instances/{instanceId}/databases/{database}/sql/commands:
     parameters:
@@ -63,6 +201,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SqlCommandResult"
+        "400":
+          description: SQL execution error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /instances/{instanceId}/databases/{database}/sql/history:
     parameters:
@@ -92,6 +248,20 @@ paths:
                   nextCursor:
                     type: string
                     nullable: true
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SqlHistoryItem"
+                  nextCursor:
+                    type: string
+                    nullable: true
 
   /instances/{instanceId}/databases/{database}/schema:
     parameters:
@@ -107,6 +277,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SchemaSnapshot"
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaSnapshot"
 
   /instances/{instanceId}/databases/{database}/tables:
     parameters:
@@ -118,6 +294,14 @@ paths:
       responses:
         "200":
           description: Tables and basic stats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TableSummary"
+        "404":
+          description: Instance not found
           content:
             application/json:
               schema:
@@ -140,6 +324,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TableSchema"
+        "404":
+          description: Instance or table not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
 
   /instances/{instanceId}/databases/{database}/tables/{table}/rows:
     parameters:
@@ -168,6 +359,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TableRowsPage"
+        "404":
+          description: Instance or table not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
 
   /instances/{instanceId}/databases/{database}/ai/tasks:
     parameters:
@@ -189,6 +387,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AiTaskWithProgram"
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
     get:
       tags: [AI]
       summary: List AI tasks
@@ -201,6 +408,14 @@ paths:
       responses:
         "200":
           description: Tasks for the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AiTask"
+        "404":
+          description: Instance not found
           content:
             application/json:
               schema:
@@ -228,12 +443,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AiTaskWithProgram"
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
     get:
       tags: [AI]
       summary: List programs
       responses:
         "200":
           description: Programs for the database
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AiProgram"
+        "404":
+          description: Instance not found
           content:
             application/json:
               schema:
@@ -256,6 +488,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AiProgram"
+        "404":
+          description: Instance or program not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
   /instances/{instanceId}/databases/{database}/ai/tasks/{taskId}:
     parameters:
@@ -272,6 +513,123 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AiTaskWithProgram"
+        "404":
+          description: Instance or task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /instances/{instanceId}/databases/{database}/imports:
+    parameters:
+      - $ref: "#/components/parameters/InstanceId"
+      - $ref: "#/components/parameters/Database"
+    post:
+      tags: [Imports]
+      summary: Create a new import job
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Import job name
+                source:
+                  type: string
+                  enum: [CSV upload, JSON upload, API pull, Database sync, upload, manual]
+                  default: CSV upload
+                notes:
+                  type: string
+                  description: Optional notes about the import
+                rows:
+                  type: integer
+                  description: Expected number of rows
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Files to import (CSV format)
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                source:
+                  type: string
+                  enum: [CSV upload, JSON upload, API pull, Database sync, upload, manual]
+                notes:
+                  type: string
+                rows:
+                  type: integer
+      responses:
+        "202":
+          description: Import job created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportJob"
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    get:
+      tags: [Imports]
+      summary: List import jobs for a database
+      responses:
+        "200":
+          description: List of import jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ImportJob"
+        "404":
+          description: Instance not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ImportJob"
+
+  /instances/{instanceId}/databases/{database}/imports/{jobId}:
+    parameters:
+      - $ref: "#/components/parameters/InstanceId"
+      - $ref: "#/components/parameters/Database"
+      - $ref: "#/components/parameters/JobId"
+    get:
+      tags: [Imports]
+      summary: Get import job details
+      responses:
+        "200":
+          description: Import job details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportJob"
+        "404":
+          description: Instance or job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 
 components:
   parameters:
@@ -300,6 +658,17 @@ components:
       name: taskId
       required: true
       schema: {type: string}
+    JobId:
+      in: path
+      name: jobId
+      required: true
+      schema: {type: string}
+    UserId:
+      in: path
+      name: userId
+      required: true
+      schema: {type: string}
+      description: User identifier (username)
 
   schemas:
     Instance:
@@ -312,6 +681,44 @@ components:
       properties:
         name: {type: string}
         lastMigration: {type: string, nullable: true}
+    DatabaseCreate:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          description: Name of the database/branch to create
+          pattern: ^[^@][^@]*$
+        fromBranch:
+          type: string
+          nullable: true
+          description: Optional source branch to copy from
+        copyData:
+          type: boolean
+          default: false
+          description: If true and fromBranch is provided, copy data in addition to schema
+    Migration:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique migration identifier
+        name:
+          type: string
+          description: Migration name (e.g., "0001-demo")
+        parentId:
+          type: string
+          nullable: true
+          description: ID of the parent migration, null for root migrations
+    UserSettings:
+      type: object
+      description: User settings object. Can contain any key-value pairs for user preferences.
+      additionalProperties: true
+      example:
+        theme: "dark"
+        language: "en"
+        editorFontSize: 14
+        autoSave: true
     SqlCommandRequest:
       type: object
       required: [query]
@@ -488,3 +895,56 @@ components:
           $ref: "#/components/schemas/AiTask"
         program:
           $ref: "#/components/schemas/AiProgram"
+    ImportJob:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique job identifier
+        name:
+          type: string
+          description: Import job name
+        source:
+          type: string
+          enum: [CSV upload, JSON upload, API pull, Database sync, upload, manual]
+          description: Source of the import
+        status:
+          type: string
+          enum: [running, completed, failed]
+          description: Current job status
+        progress:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Progress percentage (0-100)
+        createdAt:
+          type: string
+          format: date-time
+          description: Job creation timestamp
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Job completion timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+        rows:
+          type: integer
+          nullable: true
+          description: Number of rows imported
+        notes:
+          type: string
+          description: Optional notes about the import
+        files:
+          type: array
+          items:
+            type: object
+            properties:
+              filename:
+                type: string
+              size:
+                type: integer
+                description: File size in bytes
+          description: List of files associated with the import

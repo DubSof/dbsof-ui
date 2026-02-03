@@ -1,0 +1,189 @@
+@import "@dbsof/common/mixins.scss";
+
+.settingsPage {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  color: var(--Grey15);
+
+  @include darkTheme {
+    color: var(--Grey85);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.backButton {
+  padding: 8px 16px;
+  background: var(--Grey95);
+  border: 1px solid var(--Grey85);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--Grey15);
+
+  @include darkTheme {
+    background: var(--Grey15);
+    border-color: var(--Grey25);
+    color: var(--Grey85);
+  }
+
+  &:hover {
+    background: var(--Grey90);
+
+    @include darkTheme {
+      background: var(--Grey20);
+    }
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+}
+
+.error {
+  padding: 12px 16px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  color: #c33;
+  margin-bottom: 20px;
+}
+
+.success {
+  padding: 12px 16px;
+  background: #efe;
+  border: 1px solid #cfc;
+  border-radius: 4px;
+  color: #3c3;
+  margin-bottom: 20px;
+}
+
+.settingsForm {
+  background: var(--Grey100);
+  border: 1px solid var(--Grey85);
+  border-radius: 8px;
+  padding: 24px;
+
+  @include darkTheme {
+    background: var(--Grey10);
+    border-color: var(--Grey20);
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
+.settingRow {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--Grey90);
+
+  @include darkTheme {
+    border-bottom-color: var(--Grey20);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.settingLabel {
+  flex: 0 0 200px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--Grey20);
+
+  @include darkTheme {
+    color: var(--Grey80);
+  }
+}
+
+.settingInput {
+  flex: 1;
+
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--Grey85);
+    border-radius: 4px;
+    font-size: 14px;
+    background: var(--Grey98);
+    color: var(--Grey15);
+
+    @include darkTheme {
+      background: var(--Grey15);
+      border-color: var(--Grey25);
+      color: var(--Grey85);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #4a9eff;
+    }
+  }
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    margin-right: 8px;
+  }
+
+  span {
+    font-size: 14px;
+    color: var(--Grey40);
+
+    @include darkTheme {
+      color: var(--Grey60);
+    }
+  }
+}
+
+.actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.saveButton {
+  padding: 12px 24px;
+  background: #4a9eff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #3a8eef;
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+}

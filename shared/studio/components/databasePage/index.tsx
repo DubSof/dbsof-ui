@@ -16,7 +16,7 @@ import {useDBRouter} from "../../hooks/dbRoute";
 
 import styles from "./databasePage.module.scss";
 
-import {SessionStateBar, SessionStateButton} from "../sessionState";
+import {SessionStateButton} from "../sessionState";
 import {ErrorPage} from "../errorPage";
 import {WarningIcon} from "../../icons";
 
@@ -150,13 +150,9 @@ const DatabasePageContent = observer(function DatabasePageContent({
       <SessionStateButton />
 
       <div className={cn(styles.databasePage, {[styles.mobile]: isMobile})}>
-        <SessionStateBar
-          className={styles.sessionBar}
-          active={tabs.find((t) => t.path === currentTabId)?.usesSessionState}
-        />
         <TabBar
           tabs={tabs}
-          hide={dbState.sessionState.panelOpen}
+          hide={false}
           isMobile={isMobile}
           mobileMenu={mobileMenu}
         />

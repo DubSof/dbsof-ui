@@ -52,8 +52,22 @@
   }
 }
 
+.branchGraphContainer {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .branchGraph {
   flex-grow: 1;
+}
+
+.createBranchButton {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
 }
 
 .databaseCard,

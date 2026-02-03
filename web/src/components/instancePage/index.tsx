@@ -1,13 +1,11 @@
 import {observer} from "mobx-react-lite";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import {BranchGraph} from "@dbsof/common/branchGraph";
 import {InfoCards} from "@dbsof/common/components/infoCards";
-
-// import {useModal} from "@dbsof/common/hooks/useModal";
-// import Button from "@dbsof/common/ui/button";
-// import CreateBranchModal from "@dbsof/studio/components/modals/createBranch";
-// import {fetchExampleSchema} from "@dbsof/studio/tabs/dashboard";
+import {useModal} from "@dbsof/common/hooks/useModal";
+import {Button} from "@dbsof/common/newui";
+import CreateBranchModal from "@dbsof/studio/components/modals/createBranch";
 
 import {useAppState} from "../../state/providers";
 
@@ -15,22 +13,40 @@ import styles from "./instancePage.module.scss";
 
 export const InstancePage = observer(function InstancePage() {
   const instanceState = useAppState().instanceState;
-  // const navigate = useNavigate();
-  // const {openModal} = useModal();
+  const navigate = useNavigate();
+  const {openModal} = useModal();
 
   return (
     <div className={styles.instancePage}>
       <div className={styles.pageWrapper}>
         <div className={styles.header}>Branches</div>
         {instanceState.databases ? (
-          <BranchGraph
-            className={styles.branchGraph}
-            instanceId={instanceState.instanceId!}
-            instanceState={instanceState}
-            BranchLink={({branchName, ...props}) => (
-              <Link to={encodeURIComponent(branchName)} {...props} />
-            )}
-          />
+          <div className={styles.branchGraphContainer}>
+            <Button
+              kind="primary"
+              className={styles.createBranchButton}
+              onClick={() => {
+                openModal(
+                  <CreateBranchModal
+                    instanceState={instanceState}
+                    navigateToDB={(branchName) => {
+                      navigate(`/${encodeURIComponent(branchName)}`);
+                    }}
+                  />
+                );
+              }}
+            >
+              Create new branch
+            </Button>
+            <BranchGraph
+              className={styles.branchGraph}
+              instanceId={instanceState.instanceId!}
+              instanceState={instanceState}
+              BranchLink={({branchName, ...props}) => (
+                <Link to={encodeURIComponent(branchName)} {...props} />
+              )}
+            />
+          </div>
         ) : null}
 
         <div className={styles.header}>Tips and Updates</div>

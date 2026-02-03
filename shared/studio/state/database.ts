@@ -210,9 +210,16 @@ export class DatabaseState extends Model({
         abortController.signal
       )
       .then(({result}) => {
-        if (result) {
+        if (result && result.length > 0) {
+          // result[0] is an object with column names as keys
+          // For COUNT queries, get the first numeric value
+          const firstRow = result[0];
+          const countValue = typeof firstRow === 'object' && firstRow !== null
+            ? Object.values(firstRow)[0]
+            : firstRow;
+          const count = Number(countValue);
           runInAction(() => {
-            this.objectCount = Number(result[0]);
+            this.objectCount = Number.isNaN(count) ? null : count;
           });
         }
       })

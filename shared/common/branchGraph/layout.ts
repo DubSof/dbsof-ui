@@ -1,5 +1,5 @@
 import * as z from "zod";
-import {AuthenticationError, mockMode} from "@dbsof/platform/client";
+import {AuthenticationError} from "@dbsof/platform/client";
 
 import {InstanceState} from "@dbsof/studio/state/instance";
 import {
@@ -58,6 +58,14 @@ function _getBranchGraphDataFromCache(
     : null;
 }
 
+function _clearBranchGraphCache(instanceId: string) {
+  storeLocalStorageCacheItem(
+    branchGraphCacheName,
+    instanceId,
+    null
+  );
+}
+
 function _storeBranchGraphDataInCache(
   instanceId: string,
   data: MigrationsData[]
@@ -105,22 +113,6 @@ export async function fetchMigrationsData(
   instanceId: string,
   instanceState: InstanceState | null
 ): Promise<MigrationsData[] | null> {
-  if (mockMode) {
-    return [
-      {
-        branch: "main",
-        migrations: [
-          {id: "m1", name: "0001-demo", parentId: null},
-          {id: "m2", name: "0002-demo", parentId: "m1"},
-        ],
-      },
-      {
-        branch: "playground",
-        migrations: [{id: "p1", name: "0001-play", parentId: null}],
-      },
-    ];
-  }
-
   if (instanceState && instanceState.databases === null) {
     return null;
   }
@@ -164,28 +156,31 @@ export async function fetchMigrationsData(
         }
       }
 
-      const conn = instanceState.getConnection(name);
-      const migrations = await conn
-        .query(
-          `
-              select schema::Migration {
-                id,
-                name,
-                parentId := assert_single(.parents.id)
-              }`
-        )
-        .catch((err) => {
-          if (err instanceof AuthenticationError) {
-            return null;
+      // Fetch migrations from Flask API
+      try {
+        const instanceId = instanceState.instanceId ?? "demo";
+        const url = `${instanceState.serverUrl}/instances/${encodeURIComponent(instanceId)}/databases/${encodeURIComponent(name)}/migrations`;
+        const res = await fetch(url);
+        
+        if (!res.ok) {
+          if (res.status === 404) {
+            return {branch: name, migrations: null};
           }
-          throw err;
-        });
-      return {
-        branch: name,
-        migrations: migrations
-          ? sortMigrations(migrations.result ?? [])
-          : null,
-      };
+          throw new Error(`Failed to fetch migrations: ${res.status}`);
+        }
+        
+        const migrations = await res.json();
+        return {
+          branch: name,
+          migrations: migrations && migrations.length > 0 ? sortMigrations(migrations) : null,
+        };
+      } catch (err) {
+        if (err instanceof AuthenticationError) {
+          return {branch: name, migrations: null};
+        }
+        console.error(`Failed to fetch migrations for ${name}:`, err);
+        return {branch: name, migrations: null};
+      }
     })
   );
   _storeBranchGraphDataInCache(instanceId, migrationsData);

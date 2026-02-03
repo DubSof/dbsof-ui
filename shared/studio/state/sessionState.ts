@@ -91,7 +91,6 @@ export const sessionStateCtx = createMobxContext<SessionState>();
 export class SessionState extends Model({
   draftState: prop<DraftState | null>(null).withSetter(),
 
-  barOpen: prop(false),
   panelOpen: prop(false),
 }) {
   @computed
@@ -104,29 +103,6 @@ export class SessionState extends Model({
   configNames: string[] = [];
   configNamesIndex: Fuzzysort.Prepared[] = [];
 
-  @modelAction
-  setBarOpen(open: boolean, persist = true) {
-    this.barOpen = open;
-    if (persist) {
-      try {
-        const dbState = dbCtx.get(this)!;
-        const barOpenState = new Set(
-          JSON.parse(localStorage.getItem("dbsofStudioSessionBar") ?? "[]")
-        );
-        if (open) {
-          barOpenState.add(dbState.name);
-        } else {
-          barOpenState.delete(dbState.name);
-        }
-        localStorage.setItem(
-          "dbsofStudioSessionBar",
-          JSON.stringify([...barOpenState.values()])
-        );
-      } catch (e) {
-        // ignore errors
-      }
-    }
-  }
 
   @observable.ref
   highlight: {kind: "g" | "c" | "o"; name: string} | null = null;
@@ -158,16 +134,6 @@ export class SessionState extends Model({
   }
 
   onAttachedToRootStore() {
-    const dbState = dbCtx.get(this)!;
-    try {
-      const barOpenState = new Set(
-        JSON.parse(localStorage.getItem("dbsofStudioSessionBar") ?? "[]")
-      );
-      this.setBarOpen(barOpenState.has(dbState.name), false);
-    } catch (e) {
-      // ignore errors
-    }
-
     this.loadStoredSessionState();
   }
 
@@ -222,22 +188,28 @@ export class SessionState extends Model({
       [...schemaData.globals.values()].map((global) => [global.name, global])
     );
 
-    const configType = schemaData.objectsByName.get("cfg::AbstractConfig")!;
+    const configType = schemaData.objectsByName.get("cfg::AbstractConfig");
     const allowedConfigNames = this.allowedConfigNames;
-    this.configNames = Object.values(configType.properties)
-      .filter(
-        (prop) =>
-          prop.name !== "id" &&
-          prop.cardinality !== "Many" &&
-          !prop.annotations.some(
-            (anno) =>
-              (anno.name === "cfg::system" || anno.name === "cfg::internal") &&
-              anno["@value"] === "true"
-          )
-      )
-      .map((prop) => prop.name)
-      .filter(allowedConfigNames)
-      .sort((a, b) => a.localeCompare(b));
+    // Handle case where cfg::AbstractConfig doesn't exist (e.g., SQLite backend)
+    if (configType && configType.properties) {
+      this.configNames = Object.values(configType.properties)
+        .filter(
+          (prop) =>
+            prop.name !== "id" &&
+            prop.cardinality !== "Many" &&
+            !prop.annotations.some(
+              (anno) =>
+                (anno.name === "cfg::system" || anno.name === "cfg::internal") &&
+                anno["@value"] === "true"
+            )
+        )
+        .map((prop) => prop.name)
+        .filter(allowedConfigNames)
+        .sort((a, b) => a.localeCompare(b));
+    } else {
+      // No config type available (SQLite backend)
+      this.configNames = [];
+    }
     this.configNamesIndex = this.configNames.map((name) =>
       fuzzysort.prepare(name)
     );
@@ -266,7 +238,9 @@ export class SessionState extends Model({
     }
 
     for (const configName of this.configNames) {
+      if (!configType || !configType.properties) continue;
       const configSchema = configType.properties[configName];
+      if (!configSchema) continue;
       const type = configSchema.target!;
       const storedItem = sessionStateData?.config[configName];
       const newVal =
@@ -435,14 +409,22 @@ export class SessionState extends Model({
         })),
       config: Object.entries(this.draftState!.config)
         .filter(([_, config]) => config.active && !config.error)
-        .map(([name, config]) => ({
-          name,
-          type: config.type as Frozen<SchemaType>,
-          value: parseEditorValue(
-            config.value.data!,
-            config.type.data as PrimitiveType
-          ),
-        })),
+        .map(([name, config]) => {
+          const typeData = config.type?.data as PrimitiveType | undefined;
+          if (!typeData) {
+            // Skip config without type data (e.g., SQLite backend where EdgeDB schema types aren't available)
+            return null;
+          }
+          return {
+            name,
+            type: config.type as Frozen<SchemaType>,
+            value: parseEditorValue(
+              config.value.data!,
+              typeData
+            ),
+          };
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null),
       options: queryOptions
         .filter(
           (opt) =>
@@ -451,15 +433,21 @@ export class SessionState extends Model({
         )
         .map(({name}) => {
           const opt = this.draftState!.options[name];
+          const typeData = opt.type?.data as PrimitiveType | undefined;
+          if (!typeData) {
+            // Skip options without type data (e.g., SQLite backend where EdgeDB schema types aren't available)
+            return null;
+          }
           return {
             name,
             type: opt.type as Frozen<SchemaType>,
             value: parseEditorValue(
               opt.value.data!,
-              opt.type.data as PrimitiveType
+              typeData
             ),
           };
-        }),
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null),
     };
     this.draftSnapshot = clone(this.draftState!);
   }

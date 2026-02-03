@@ -31,6 +31,13 @@
   }
 }
 
+.logoLink {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 .logo {
   fill: var(--Grey30);
 
@@ -52,6 +59,31 @@
   align-items: center;
   gap: 8px;
   margin-left: auto;
+}
+
+.settingsLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--Grey50);
+  }
+
+  &:hover {
+    background-color: var(--Grey95);
+
+    @include darkTheme {
+      background-color: var(--Grey15);
+    }
+  }
 }
 
 .userMenu {

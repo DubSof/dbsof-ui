@@ -104,7 +104,7 @@ export const DatabaseDashboard = observer(function DatabaseDashboard() {
           <div className={styles.stats}>
             <div className={styles.stat}>
               <div className={styles.statValue}>
-                {dbState.objectCount ?? "-"}
+                {dbState.objectCount != null && !Number.isNaN(dbState.objectCount) ? dbState.objectCount : "-"}
               </div>
               <div className={styles.statLabel}>objects</div>
             </div>

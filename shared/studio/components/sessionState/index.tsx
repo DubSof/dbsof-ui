@@ -28,48 +28,26 @@ import {TabSep} from "../headerNav";
 import {PrimitiveType} from "../dataEditor/utils";
 import {useIsMobile} from "@dbsof/common/hooks/useMobile";
 import {CloseButton} from "@dbsof/common/ui/mobile";
+import {Link} from "react-router-dom";
 
 export function SessionStateControls() {
   return <div id="sessionStateControls" />;
 }
 
 export const SessionStateButton = observer(function SessionStateButton() {
-  const sessionState = useDatabaseState().sessionState;
   const targetEl = document.getElementById("sessionStateControls");
-  const isMobile = useIsMobile();
 
   if (targetEl) {
     return createPortal(
       <div className={styles.sessionState}>
         <TabSep />
-        <div
-          className={cn(styles.stateButton, {
-            [styles.open]: sessionState.barOpen,
-            [styles.panelOpen]: sessionState.panelOpen,
-            [styles.disabled]: isMobile && !sessionState.isLoaded,
-          })}
-          onClick={() => {
-            if (isMobile) {
-              if (sessionState.isLoaded) sessionState.openPanel();
-            } else if (sessionState.barOpen) {
-              sessionState.closePanel();
-              sessionState.setBarOpen(false);
-            } else {
-              sessionState.setBarOpen(true);
-            }
-          }}
+        <Link
+          to="/settings"
+          className={cn(styles.stateButton, styles.settingsLink)}
         >
           <SettingsIcon className={styles.icon} />
           Client Settings
-          {isMobile ? (
-            <OpenNewScreenIcon className={styles.iconMobile} />
-          ) : (
-            <>
-              <ChevronDownIcon className={styles.chevron} />
-              <ButtonTabArrow className={styles.tabArrow} />
-            </>
-          )}
-        </div>
+        </Link>
       </div>,
       targetEl
     );
@@ -124,137 +102,6 @@ const renderValueWithType = (value: any, type: SchemaType) => {
   }
   return null;
 };
-
-export interface SessionStateBarProps {
-  className?: string;
-  active?: boolean;
-}
-
-export const SessionStateBar = observer(function SessionStateBar({
-  className,
-  active = false,
-}: SessionStateBarProps) {
-  const dbState = useDatabaseState();
-  const state = dbState.sessionState;
-
-  const ref = useRef<HTMLDivElement>(null);
-
-  const [size, setSize] = useState({height: 0, left: 56});
-  useResize(ref, (rect) =>
-    setSize({
-      height: rect.height,
-      left: ref.current!.getBoundingClientRect().left,
-    })
-  );
-
-  return (
-    <div
-      className={cn(
-        styles.sessionBarWrapper,
-        inspectorStyles.inspectorTheme,
-        className,
-        {
-          [styles.notActive]: !active,
-          [styles.barOpen]: state.barOpen,
-          [styles.panelOpen]: state.panelOpen,
-        }
-      )}
-      style={{height: state.barOpen ? size.height + 4 : undefined}}
-    >
-      <div
-        className={styles.panelBg}
-        style={{
-          left: !state.panelOpen ? size.left : undefined,
-          height: state.barOpen && !state.panelOpen ? size.height : undefined,
-        }}
-      />
-      <SessionEditorPanel show={state.panelOpen} />
-      <div ref={ref} className={styles.panelInner}>
-        <SessionBarContent />
-      </div>
-    </div>
-  );
-});
-
-const SessionBarContent = observer(function SessionBarContent() {
-  const state = useDatabaseState().sessionState;
-
-  const [overflowCount, setOverflowCount] = useState(0);
-
-  const ref = useRef<HTMLDivElement>(null);
-
-  const activeState = [
-    ...state.activeState.globals.map((g) => ({kind: "g" as const, ...g})),
-    ...state.activeState.config.map((c) => ({kind: "c" as const, ...c})),
-    ...state.activeState.options.map((o) => ({kind: "o" as const, ...o})),
-  ];
-
-  useResize(
-    ref,
-    ({height}) => {
-      if (ref.current!.scrollHeight > height) {
-        let count = 0;
-        for (const child of ref.current!.children) {
-          if ((child as HTMLElement).offsetTop > height) {
-            break;
-          }
-          count++;
-        }
-        setOverflowCount(
-          state.activeState.globals.length +
-            state.activeState.config.length +
-            state.activeState.options.length -
-            count
-        );
-      } else {
-        setOverflowCount(0);
-      }
-    },
-    [state.activeState]
-  );
-
-  return (
-    <div className={styles.sessionBar}>
-      <div ref={ref} className={styles.chips}>
-        {activeState.length ? (
-          activeState.map(({kind, name, value, type}) => {
-            const nameParts = name.split("::");
-            return (
-              <div
-                key={name}
-                className={styles.chip}
-                onDoubleClick={() => state.openPanel({kind, name})}
-              >
-                <div className={styles.chipKind}>{kind}</div>
-                {nameParts.length > 1 && nameParts[0] !== "default" ? (
-                  <span>{nameParts.slice(0, -1).join("::")}::</span>
-                ) : null}
-                {nameParts[nameParts.length - 1]} :=
-                <div className={styles.chipVal}>
-                  {renderValueWithType(value, type.data)}
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div className={styles.emptySessionBar}>
-            {state.isLoaded ? "no configured settings" : "loading settings..."}
-          </div>
-        )}
-      </div>
-      {state.isLoaded ? (
-        <div className={styles.openPanel} onClick={() => state.openPanel()}>
-          <div className={styles.panelButton}>
-            {activeState.length && overflowCount ? (
-              <span>+{overflowCount}</span>
-            ) : null}
-            <ChevronDownIcon />
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-});
 
 function SessionEditorPanel({show}: {show: boolean}) {
   const ref = useRef<HTMLDivElement>(null);
@@ -311,6 +158,7 @@ const SessionEditorPanelContent = observer(
     const filteredOptions = searchFilter
       ? fuzzysort.go(searchFilter, queryOptions, {key: "indexed"})
       : queryOptions.map((opt) => ({obj: opt}));
+
 
     return (
       <div className={styles.editorPanelContent}>
@@ -453,6 +301,11 @@ function ListItem({
   validator?: InputValidator;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+
+  // Handle missing type (SQLite backend where EdgeDB schema types aren't available)
+  if (!type) {
+    return null;
+  }
 
   const Input = getInputComponent(type as PrimitiveType, allowNull);
 

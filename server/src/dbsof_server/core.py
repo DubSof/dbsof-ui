@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+import shutil
 import threading
 import time
 import uuid
@@ -21,6 +22,8 @@ AI_TASK_LOCK = threading.Lock()
 AI_PROGRAMS: Dict[str, Dict[str, Any]] = {}
 IMPORT_JOBS: Dict[str, Dict[str, Any]] = {}
 IMPORT_LOCK = threading.Lock()
+USER_SETTINGS: Dict[str, Dict[str, Any]] = {}
+USER_SETTINGS_LOCK = threading.Lock()
 
 
 def db_path(db_name: str) -> Path:
@@ -57,6 +60,150 @@ def list_databases() -> List[Dict[str, Any]]:
         seed_target_ontology("main")
         dbs.append({"name": "main", "lastMigration": None})
     return dbs
+
+
+def get_database_migrations(db_name: str, visited: set[str] | None = None) -> List[Dict[str, Any]]:
+    """Get migration history for a database."""
+    if visited is None:
+        visited = set()
+    
+    # Prevent infinite recursion
+    if db_name in visited:
+        return []
+    visited.add(db_name)
+    
+    path = db_path(db_name)
+    if not path.exists():
+        return []
+    
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    try:
+        # Check for parent branch information
+        parent_branch_row = conn.execute("SELECT v FROM __meta__ WHERE k = 'parent_branch'").fetchone()
+        parent_migration_row = conn.execute("SELECT v FROM __meta__ WHERE k = 'parent_migration'").fetchone()
+        parent_branch = parent_branch_row[0] if parent_branch_row else None
+        parent_migration = parent_migration_row[0] if parent_migration_row else None
+        
+        # If this branch was created from another branch, include parent's migration history
+        migrations = []
+        parent_migration_id = None
+        if parent_branch and parent_migration:
+            # Get parent branch's full migration history
+            parent_migrations = get_database_migrations(parent_branch, visited.copy())
+            # Include all parent migrations up to and including the point where this branch was created
+            for pm in parent_migrations:
+                migrations.append(pm)
+                if pm["name"] == parent_migration:
+                    # Found the migration point where we branched from - use its ID as parentId
+                    parent_migration_id = pm["id"]
+                    break
+        
+        # Check if database has been seeded (has migrations)
+        meta = conn.execute("SELECT v FROM __meta__ WHERE k = 'seeded'").fetchone()
+        if meta:
+            # Add this branch's own migration, connected to parent if exists
+            migrations.append({
+                "id": f"{db_name}-initial",
+                "name": f"0001-{db_name}",
+                "parentId": parent_migration_id if parent_migration_id else None,
+            })
+            return migrations
+        
+        # Check if database has any tables (indicates it's been initialized)
+        tables = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != '__meta__'"
+        ).fetchall()
+        
+        if tables:
+            # Database exists but no migration tracking - return migrations with parent connection
+            migrations.append({
+                "id": f"{db_name}-initial",
+                "name": f"0001-{db_name}",
+                "parentId": parent_migration_id if parent_migration_id else None,
+            })
+            return migrations
+        
+        # Empty database - no migrations
+        return []
+    finally:
+        conn.close()
+
+
+def create_database(
+    db_name: str, from_branch: str | None = None, copy_data: bool = False
+) -> Dict[str, Any]:
+    """Create a new database, optionally copying from an existing branch."""
+    # Validate database name
+    if not db_name or not db_name.strip():
+        raise ValueError("Database name is required")
+    
+    # Check for invalid patterns (matches frontend validation)
+    if db_name.startswith("@"):
+        raise ValueError("Database name cannot start with '@'")
+    if db_name.startswith("__") and db_name.endswith("__"):
+        raise ValueError("Invalid database name")
+    
+    # Validate characters (alphanumeric, underscore, hyphen)
+    safe = "".join(c for c in db_name if c.isalnum() or c in ("_", "-")).strip()
+    if not safe or safe != db_name:
+        raise ValueError("Invalid database name: only alphanumeric characters, underscores, and hyphens are allowed")
+    
+    target_path = db_path(db_name)
+    if target_path.exists():
+        raise ValueError(f"Database '{db_name}' already exists")
+    
+    if from_branch:
+        # Copy from existing branch
+        source_path = db_path(from_branch)
+        if not source_path.exists():
+            raise ValueError(f"Source branch '{from_branch}' does not exist")
+        
+        # Copy the database file
+        shutil.copy2(source_path, target_path)
+        
+        # Store parent branch information in metadata
+        conn = sqlite3.connect(target_path)
+        try:
+            # Get the parent branch's last migration to establish connection
+            parent_migrations = get_database_migrations(from_branch)
+            parent_last_migration = parent_migrations[-1]["name"] if parent_migrations else None
+            
+            # Store parent branch info
+            conn.execute(
+                "INSERT OR REPLACE INTO __meta__ (k, v) VALUES ('parent_branch', ?)",
+                (from_branch,)
+            )
+            if parent_last_migration:
+                conn.execute(
+                    "INSERT OR REPLACE INTO __meta__ (k, v) VALUES ('parent_migration', ?)",
+                    (parent_last_migration,)
+                )
+            
+            if not copy_data:
+                # If only copying schema, clear all data but keep structure
+                conn.execute("PRAGMA foreign_keys = OFF;")
+                try:
+                    # Get all table names
+                    cur = conn.execute(
+                        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != '__meta__'"
+                    )
+                    tables = [row[0] for row in cur.fetchall()]
+                    
+                    # Delete all data from tables
+                    for table in tables:
+                        conn.execute(f'DELETE FROM "{table}"')
+                finally:
+                    conn.execute("PRAGMA foreign_keys = ON;")
+            
+            conn.commit()
+        finally:
+            conn.close()
+    else:
+        # Create empty database
+        ensure_db(db_name)
+    
+    return {"name": db_name, "lastMigration": None}
 
 
 def seed_target_ontology(db_name: str):
@@ -377,3 +524,33 @@ def table_schema(conn: sqlite3.Connection, table: str) -> Dict[str, Any]:
         ],
         "primaryKey": [row["name"] for row in info if row["pk"]],
     }
+
+
+def get_user_settings(user_id: str) -> Dict[str, Any]:
+    """Get user settings for a user. Returns default settings if user has no settings."""
+    with USER_SETTINGS_LOCK:
+        if user_id not in USER_SETTINGS:
+            # Initialize with dummy settings for new users
+            USER_SETTINGS[user_id] = {
+                "theme": "light",
+                "language": "en",
+                "editorFontSize": 14,
+                "autoSave": True,
+                "showLineNumbers": True,
+                "wordWrap": False,
+                "tabSize": 2,
+                "preferredDatabase": None,
+            }
+        return USER_SETTINGS.get(user_id, {})
+
+
+def update_user_settings(user_id: str, settings: Dict[str, Any]) -> Dict[str, Any]:
+    """Update user settings. Merges with existing settings."""
+    if not isinstance(settings, dict):
+        raise ValueError("Settings must be a dictionary")
+    
+    with USER_SETTINGS_LOCK:
+        if user_id not in USER_SETTINGS:
+            USER_SETTINGS[user_id] = {}
+        USER_SETTINGS[user_id].update(settings)
+        return USER_SETTINGS[user_id].copy()

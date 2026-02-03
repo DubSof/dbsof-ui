@@ -1,33 +1,21 @@
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 
-import {getHTTPSCRAMAuth} from "@dbsof/platform/client";
-import {cryptoUtils} from "@dbsof/platform/client";
-
 import {
   ModalPanel,
   ArrowRightIcon,
   ModalContent,
   TextInput,
   SubmitButton,
-  InfoIcon,
 } from "@dbsof/common/newui";
 
 import {serverUrl, setAuthToken} from "../../state/models/app";
+import {getHTTPSCRAMAuth} from "@dbsof/platform/client";
 import {Logo} from "../header";
 
 import styles from "./loginPage.module.scss";
 
-const httpSCRAMAuth = getHTTPSCRAMAuth(cryptoUtils);
-
-const isLocalhost = (() => {
-  try {
-    return new URL(serverUrl).hostname === "localhost";
-  } catch {
-    // ignore
-  }
-  return false;
-})();
+const httpSCRAMAuth = getHTTPSCRAMAuth();
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +49,7 @@ export default function LoginPage() {
 
       <ModalPanel
         className={styles.loginPanel}
-        title="Welcome to Studio UI"
+        title="Welcome to Dbsof"
         onSubmit={onSubmit}
         formError={error}
         footerButtons={
@@ -76,17 +64,6 @@ export default function LoginPage() {
         }
       >
         <ModalContent className={styles.formContent}>
-          {isLocalhost ? (
-            <div className={styles.loginInfo}>
-              <InfoIcon />
-              <div>
-                <span>It looks like you're running Studio locally.</span>
-                <br /> If you created this instance using the Studio CLI, the
-                easiest way to login is by running your platform's UI launcher
-                command from your project directory.
-              </div>
-            </div>
-          ) : null}
           <TextInput
             label="Username"
             {...register("username", {

@@ -82,6 +82,11 @@
     z-index: 200;
   }
 
+  &.settingsLink {
+    // Settings link should not show dropdown indicators
+    text-decoration: none;
+  }
+
   .iconMobile {
     margin-left: 8px;
 
@@ -339,6 +344,17 @@
 
     @include breakpoint(mobile) {
       display: none;
+    }
+  }
+
+  .userSettingsSection {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--panel_border);
+    margin: 0 8px;
+    padding-bottom: 16px;
+
+    @include darkTheme {
+      border-bottom-color: var(--Grey22, #363636);
     }
   }
 

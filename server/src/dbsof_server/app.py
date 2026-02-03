@@ -8,6 +8,7 @@ from .blueprints.sql import bp as sql_bp
 from .blueprints.schema import bp as schema_bp
 from .blueprints.ai import bp as ai_bp
 from .blueprints.imports import bp as imports_bp
+from .blueprints.users import bp as users_bp
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -17,6 +18,7 @@ def create_app() -> Flask:
     app.register_blueprint(schema_bp)
     app.register_blueprint(ai_bp)
     app.register_blueprint(imports_bp)
+    app.register_blueprint(users_bp)
     return app
 
 
